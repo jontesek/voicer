@@ -1,8 +1,10 @@
 import {GoogleGenAI} from '@google/genai';
 import wav from 'wav';
+import { writeFile } from 'fs/promises';
 
 const GEMINI_API_KEY = 'xxx'
 
+// Helpers
 async function saveWaveFile(
    filename,
    pcmData,
@@ -25,7 +27,18 @@ async function saveWaveFile(
    });
 }
 
-async function main(gen_ai, model, voice, style, text) {
+async function saveJsonFile(filename, jsonData) {
+   await writeFile(filename, JSON.stringify(jsonData, null, 2));
+   console.log(`JSON file saved to ${filename}`)
+}
+
+async function saveTextFile(filename, textData) {
+   await writeFile(filename, textData);
+   console.log(`TXT file saved to ${filename}`)
+}
+
+// Get speech
+async function main(gen_ai, model, voice, style, text, filename) {
 
    let modelFullName;
 
@@ -55,17 +68,20 @@ async function main(gen_ai, model, voice, style, text) {
       },
    });
 
+   await saveTextFile(`files/${filename}.txt`, fullPrompt);
+   await saveJsonFile(`files/${filename}.json`, response);
    const data = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
    const audioBuffer = Buffer.from(data, 'base64');
-
-   const fileName = 'files/out.wav';
-   await saveWaveFile(fileName, audioBuffer);
+   await saveWaveFile(`files/${filename}.wav`, audioBuffer);
 }
 
+// Testing
 const ai = new GoogleGenAI({apiKey: GEMINI_API_KEY});
 const model = 'flash';
 const voice = 'Orus';
-const style = 'Přečti jako starý kmet';
-const text = 'Vidím v dáli jezdce na koni,\nsnad to tady pěkně pokoní.'
+const style = 'Přečti básnickým hlasem jako starý panovník';
+const text = 'Vidím v dáli jezdce na koni,\nsnad to tady pěkně pokoní. Skáče tady sem a tam,\njistě ho pak pokárám.';
+const filename = 'test';
 
-await main(ai, model, voice, style, text);
+await main(ai, model, voice, style, text, filename);
+console.log("Done");

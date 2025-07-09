@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Zephyr",
+        "mood": "Bright",
+        "pitch": "Higher",
+        "gender": "female"
+    },
+    {
+        "name": "Puck",
+        "mood": "Upbeat",
+        "pitch": "Middle",
+        "gender": "male"
+    }
+]

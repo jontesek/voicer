@@ -1,0 +1,13 @@
+@import './base.css';
+
+#app-layout {
+  color: #2c3e50;
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: block;
+}
