@@ -8,7 +8,7 @@ export class TtsApi {
         this.ai = new GoogleGenAI({ apiKey: apiKey });
     }
 
-    async getSpeech({model, voiceName, temperature, style, text}) {
+    async getSpeech({ model, voiceName, temperature, style, text }) {
         // Choose model 
         let modelFullName;
         if (model === 'basic') {
@@ -46,10 +46,23 @@ export class TtsApi {
             console.error(error);
             const msg = JSON.parse(error.message).error;
             return {
-                error: {code: msg.code, status: msg.status, message: msg.message}
+                error: { code: msg.code, status: msg.status, message: msg.message }
             }
         }
         const gen_end_ts = Date.now();
+
+        console.log(response);
+
+        // Check for prohibited content
+        const blockReason = response.promptFeedback?.blockReason;
+        if (blockReason) {
+            return { error: { status: blockReason, code: 403 } };
+        }
+
+        const finishReason = response.candidates?.[0].finishReason;
+        if (finishReason) {
+            return { error: { status: finishReason, code: 403 } };
+        }
 
         // Parse audio data
         let audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
