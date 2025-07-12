@@ -2,7 +2,7 @@ import { GoogleGenAI } from '@google/genai';
 import wav from 'wav';
 import { writeFile } from 'fs/promises';
 
-const GEMINI_API_KEY = 'xxx'
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 // Helpers
 async function saveWaveFile(
@@ -79,11 +79,11 @@ async function main(gen_ai, model, voice, style, text, filename) {
       }
    }
 
-   await saveTextFile(`files/${filename}.txt`, fullPrompt);
-   await saveJsonFile(`files/${filename}.json`, response);
+   await saveTextFile(`../files/${filename}.txt`, fullPrompt);
+   await saveJsonFile(`../files/${filename}.json`, response);
    const data = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
    const audioBuffer = Buffer.from(data, 'base64');
-   await saveWaveFile(`files/${filename}.wav`, audioBuffer);
+   await saveWaveFile(`../files/${filename}.wav`, audioBuffer);
 }
 
 // Testing
