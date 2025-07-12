@@ -1,4 +1,4 @@
-import {GoogleGenAI} from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 import wav from 'wav';
 import { writeFile } from 'fs/promises';
 
@@ -14,9 +14,9 @@ async function saveWaveFile(
 ) {
    return new Promise((resolve, reject) => {
       const writer = new wav.FileWriter(filename, {
-            channels,
-            sampleRate: rate,
-            bitDepth: sampleWidth * 8,
+         channels,
+         sampleRate: rate,
+         bitDepth: sampleWidth * 8,
       });
 
       writer.on('finish', resolve);
@@ -54,10 +54,13 @@ async function main(gen_ai, model, voice, style, text, filename) {
 
    const fullPrompt = style + '\n\n' + text;
 
-   const response = await gen_ai.models.generateContent({
-      model: modelFullName,
-      contents: [{ parts: [{ text: fullPrompt }] }],
-      config: {
+   let response;
+
+   try {
+      response = await gen_ai.models.generateContent({
+         model: modelFullName,
+         contents: [{ parts: [{ text: fullPrompt }] }],
+         config: {
             temperature: 1,
             responseModalities: ['AUDIO'],
             speechConfig: {
@@ -65,8 +68,16 @@ async function main(gen_ai, model, voice, style, text, filename) {
                   prebuiltVoiceConfig: { voiceName: voice },
                },
             },
-      },
-   });
+         },
+      });
+   }
+   catch (error) {
+      console.error(error);
+      const msg = JSON.parse(error.message).error;
+      return {
+         error: { code: msg.code, status: msg.status, message: msg.message }
+      }
+   }
 
    await saveTextFile(`files/${filename}.txt`, fullPrompt);
    await saveJsonFile(`files/${filename}.json`, response);
@@ -76,12 +87,13 @@ async function main(gen_ai, model, voice, style, text, filename) {
 }
 
 // Testing
-const ai = new GoogleGenAI({apiKey: GEMINI_API_KEY});
-const model = 'flash';
+const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+const model = 'pro';
 const voice = 'Orus';
 const style = 'Přečti básnickým hlasem jako starý panovník';
-const text = 'Vidím v dáli jezdce na koni,\nsnad to tady pěkně pokoní. Skáče tady sem a tam,\njistě ho pak pokárám.';
+const text = 'Vidím v dáli jezdce na koni,\nsnad to tady pěkně pokoní.\nSkáče tady sem a tam,\njistě ho pak pokárám.';
 const filename = 'test';
 
-await main(ai, model, voice, style, text, filename);
+const res = await main(ai, model, voice, style, text, filename);
+console.log(res);
 console.log("Done");
