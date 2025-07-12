@@ -123,8 +123,13 @@ const generateAudio = async () => {
         body: JSON.stringify(audioForm),
         headers: { 'Content-Type': 'application/json' }
     });
-    // Show result
+    // Enable button
     genBtnDisabled.value = false;
+    // Backend failure
+    if (response.status >= 500) {
+        genInfo.value = "Problem with backend.";
+        return;
+    }
     const responseData = await response.json();
     // Problem arised
     if ('error' in responseData) {
