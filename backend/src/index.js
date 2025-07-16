@@ -2,8 +2,9 @@ import express from 'express';
 
 import { AudioSaver } from './saver.js';
 import { TtsApi } from './tts_api.js';
-import { GEMINI_API_KEY } from './settings.js';
-import {readJsonFile, sleep} from './helpers.js'
+import { GEMINI_API_KEY, DB_FILE_PATH } from './settings.js';
+import { readJsonFile, sleep } from './helpers.js';
+import { getDbConnection, defineAudioModel } from './database.js';
 
 // API basics
 const app = express();
@@ -14,7 +15,13 @@ app.use(express.json({ limit: '50mb' }));
 
 // Custom objects
 const ttsApi = new TtsApi(GEMINI_API_KEY);
-const audioSaver = new AudioSaver();
+const dbConn = getDbConnection(DB_FILE_PATH);
+const audioDbModel = defineAudioModel(dbConn);
+const audioSaver = new AudioSaver(audioDbModel, {});
+
+// Update DB
+// await audioDbModel.sync();
+// process.exit();
 
 // Endpoints
 app.get('/api/ping', (req, res) => {
@@ -30,7 +37,7 @@ app.post('/api/generate', async (req, res) => {
   // Handle problems
   if ('error' in result) {
     const code = result.error.code;
-    res.status(code).json({error: result.error.status});
+    res.status(code).json({ error: result.error.status });
     return;
   }
   // await sleep(2000);
@@ -40,11 +47,11 @@ app.post('/api/generate', async (req, res) => {
 
 app.post('/api/save', async (req, res) => {
   const reqData = req.body;
-  const result = await audioSaver.saveAudio(reqData.generationInputs, reqData.generatedWav, reqData.generatedMetadata);
+  const result = await audioSaver.save(reqData.generationInputs, reqData.generatedMetadata, reqData.generatedWav);
   // Handle problems
   if ('error' in result) {
     const code = result.error.code;
-    res.status(code).json({error: result.error.status});
+    res.status(code).json({ error: result.error.status });
     return;
   }
   // All good
