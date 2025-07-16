@@ -56,15 +56,25 @@ app.post('/api/generate', async (req, res) => {
 app.post('/api/save', async (req, res) => {
   const reqData = req.body;
   const result = await audioSaver.saveNew(reqData.generationInputs, reqData.generatedMetadata, reqData.generatedWav);
-  // Handle problems
-  if ('error' in result) {
-    const code = result.error.code;
-    res.status(code).json({ error: result.error.status });
-    return;
-  }
-  // All good
   res.json(result);
 });
+
+app.get('/api/getAll', async (req, res) => {
+  const result = await audioSaver.getAll();
+  res.json(result);
+});
+
+app.delete('/api/delete/:id', async (req, res) => {
+  const id = req.params.id;
+  const result = await audioSaver.delete(id);
+  if ('error' in result) {
+    const code = result.error.code;
+    res.status(code).json({ error: result.error.msg });
+    return;
+  }
+  res.json({status: 'ok'});
+});
+
 
 // Run API
 app.listen(port, () => {

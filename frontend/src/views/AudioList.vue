@@ -2,63 +2,106 @@
   <div class="audio-list-page">
     <h2 class="mb-4">Your Audio List</h2>
 
-    <div v-if="audios.length === 0" class="alert alert-info" role="alert">
+    <div v-if="deleteSuccessMsg" class="alert alert-info">{{ deleteSuccessMsg }}</div>
+
+    <div v-if="showNoAudioMsg" class="alert alert-info" role="alert">
       No audio files found. Go to "Create Audio" to add some!
     </div>
 
-    <div v-else class="table-responsive mb-5">
+    <div v-if="audios.length > 0" class="table-responsive mb-5">
       <table class="table table-striped table-hover align-middle">
         <thead>
           <tr>
-            <th scope="col">#</th>
+            <th scope="col">ID</th>
             <th scope="col">Title</th>
-            <th scope="col">Description</th>
-            <th scope="col">File Name</th>
+            <th scope="col">Style</th>
+            <th scope="col">Text</th>
+            <th scope="col">Duration</th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(audio, index) in audios" :key="index">
-            <th scope="row">{{ index + 1 }}</th>
-            <td>{{ audio.title }}</td>
-            <td>{{ audio.description || 'N/A' }}</td>
-            <td>{{ audio.fileName }}</td>
+          <tr v-for="audio in audios" :key="audio.id">
+            <th scope="row">{{ audio.id }}</th>
+            <td>{{ trimText(audio.title || '', 20)}}</td>
+            <td>{{ trimText(audio.style || '', 30) }}</td>
+            <td>{{ trimText(audio.text, 70) }}</td>
+            <td>{{ formatDuration(audio.audioDuration) }}</td>
             <td>
-              <button class="btn btn-info btn-sm me-2">View</button>
-              <button class="btn btn-danger btn-sm" @click="deleteAudio(index)">Delete</button>
+              <button class="btn btn-info btn-sm me-2">Play</button>
+              <button class="btn btn-info btn-sm me-2">Detail</button>
+              <button class="btn btn-danger btn-sm" @click="deleteAudio(audio.id)">Delete</button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <h3 class="mt-5 mb-3">Audio List (Card View)</h3>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-      <div class="col" v-for="(audio, index) in audios" :key="`card-${index}`">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">{{ audio.title }}</h5>
-            <p class="card-text">{{ audio.description || 'No description provided.' }}</p>
-            <p class="card-text"><small class="text-muted">File: {{ audio.fileName }}</small></p>
-            <button class="btn btn-info btn-sm me-2">Play</button>
-            <button class="btn btn-outline-danger btn-sm" @click="deleteAudio(index)">Remove</button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
-// Reactive state for the list of audios
-const audios = ref([
-  // Dummy data for demonstration
-  { title: 'Morning Meditation', description: 'Relaxing sounds for a peaceful start.', fileName: 'meditation.mp3' },
-  { title: 'Workout Mix', description: 'Upbeat tracks for your exercise routine.', fileName: 'workout.wav' },
-  { title: 'Podcast Episode 1', description: 'Introduction to Vue.js development.', fileName: 'podcast_ep1.ogg' }
-]);
+// Reactive variables
+const audios = ref([]);
+const deleteSuccessMsg = ref(null);
+const showNoAudioMsg = ref(null);
+
+// Lifecycle methods
+onMounted(() => {
+  fetchAudios();
+})
+
+// Data methods
+const fetchAudios = async () => {
+  try {
+    const response = await fetch('/api/getAll');
+    const data = await response.json();
+    audios.value = data;
+    if (data.length === 0) {
+      showNoAudioMsg.value = true;
+    }
+  } catch (error) {
+    console.error(`Fetch error: ${error}`)
+  }
+}
+
+const deleteAudio = async (id) => {
+  const confirmMsg = `Do you really want to delete audio with ID ${id}?`;
+  const confirmed = window.confirm(confirmMsg);
+  if (!confirmed) {
+    return;
+  }
+  try {
+    const response = await fetch(`/api/delete/${id}`, {
+      method: 'DELETE'
+    });
+    if (response.ok) {
+      deleteSuccessMsg.value = `Audio with id ${id} was deleted.`
+      audios.value = audios.value.filter(audio => audio.id !== id)
+    }
+    else {
+      console.error(await response.text());
+    }
+
+  } catch (error) {
+    console.error(`Fetch error: ${error}`)
+  }
+}
+
+// Helper methods
+function trimText(text, maxLength) {
+  return text.length > maxLength
+    ? text.substring(0, maxLength - 3) + '...'
+    : text;
+}
+
+function formatDuration(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
 
 </script>
 
@@ -68,6 +111,6 @@ const audios = ref([
   padding: 20px;
   background-color: #f8f9fa;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 </style>

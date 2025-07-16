@@ -41,4 +41,25 @@ export class AudioSaver {
             audioId: audioRow.id
         }
     }
+
+    async getAll() {
+        const audios = this.audioDbModel.findAll({
+            order: [['id', 'DESC']]
+        })
+        return audios;
+    }
+
+    async delete(audioId) {
+        // Get data
+        const audio = await this.audioDbModel.findByPk(audioId);
+        if (!audio) {
+            return { error: { msg: `audio with ID ${audioId} not found`, code: 404 } }
+        }
+        // Remove from object storage
+        const wavFilePath = audio.wavFilePath;
+        await this.s3Client.removeObject(VOICER_BUCKET, wavFilePath);
+        // If worked, remove from DB
+        await audio.destroy();
+        return {};
+    }
 }
