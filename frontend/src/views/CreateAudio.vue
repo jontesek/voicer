@@ -118,6 +118,7 @@ const maxTokenCount = 1100;
 const generateAudio = async () => {
     // Remove player
     generatedWav.value = null;
+    saveToStorageResult.value = null;
     // Show temp info
     genBtnDisabled.value = true;
     showGenInfo.value = true;
