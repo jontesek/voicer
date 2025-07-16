@@ -1,4 +1,5 @@
 import express from 'express';
+const Minio = await import ('minio'); // minio has no default export
 
 import { AudioSaver } from './saver.js';
 import { TtsApi } from './tts_api.js';
@@ -17,10 +18,17 @@ app.use(express.json({ limit: '50mb' }));
 const ttsApi = new TtsApi(GEMINI_API_KEY);
 const dbConn = getDbConnection(DB_FILE_PATH);
 const audioDbModel = defineAudioModel(dbConn);
-const audioSaver = new AudioSaver(audioDbModel, {});
+const s3Client = new Minio.Client({
+  endPoint: 'localhost',
+  port: 9000,
+  useSSL: false,
+  accessKey: 'minioadmin',
+  secretKey: 'minioadmin'
+});
+const audioSaver = new AudioSaver(audioDbModel, s3Client);
 
 // Update DB
-// await audioDbModel.sync();
+// await dbConn.sync();
 // process.exit();
 
 // Endpoints
@@ -33,7 +41,7 @@ app.post('/api/generate', async (req, res) => {
   //const _args = { model: reqData.model, voiceName: reqData.voiceName, temperature: reqData.temperature, style: reqData.style, text: reqData.text };
   //const result = await ttsApi.getSpeech(_args);
   // const result = {error: {code: 403, status: "V_PICI", message: "Je to v pici kamo."}};
-  const result = readJsonFile('../files/tts_long_resp.json');
+  const result = readJsonFile('../files/tts_resp.json');
   // Handle problems
   if ('error' in result) {
     const code = result.error.code;
@@ -47,7 +55,7 @@ app.post('/api/generate', async (req, res) => {
 
 app.post('/api/save', async (req, res) => {
   const reqData = req.body;
-  const result = await audioSaver.save(reqData.generationInputs, reqData.generatedMetadata, reqData.generatedWav);
+  const result = await audioSaver.saveNew(reqData.generationInputs, reqData.generatedMetadata, reqData.generatedWav);
   // Handle problems
   if ('error' in result) {
     const code = result.error.code;

@@ -16,6 +16,10 @@ export function defineAudioModel(dbConn) {
             primaryKey: true,
             autoIncrement: true,
         },
+        uuid: {
+            type: DataTypes.STRING,
+            unique: true,
+        },
         model: DataTypes.STRING,
         voiceName: DataTypes.STRING,
         temperature: DataTypes.FLOAT,
