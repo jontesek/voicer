@@ -23,9 +23,9 @@
         <tbody>
           <tr v-for="audio in audios" :key="audio.id">
             <th scope="row">{{ audio.id }}</th>
-            <td>{{ trimText(audio.title || '', 20) }}</td>
-            <td>{{ trimText(audio.style || '', 30) }}</td>
-            <td>{{ trimText(audio.text, 70) }}</td>
+            <td><span :title="audio.title.length > 20 ? audio.title : ''">{{ trimText(audio.title || '', 20) }}</span></td>
+            <td><span :title="audio.style.length > 30 ? audio.style : ''">{{ trimText(audio.style || '', 30) }}</span></td>
+            <td><span :title="audio.text.length > 70 ? audio.text : ''">{{ trimText(audio.text, 70) }}</span></td>
             <td>{{ formatDuration(audio.audioDuration) }}</td>
             <td class="actions-column">
               <button class="play-btn" :aria-label="playButtonLabel"
