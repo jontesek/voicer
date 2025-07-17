@@ -17,7 +17,7 @@
             <th scope="col">Style</th>
             <th scope="col">Text</th>
             <th scope="col">Duration</th>
-            <th scope="col">Actions</th>
+            <th scope="col" class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -28,10 +28,12 @@
             <td><span :title="audio.text.length > 70 ? audio.text : ''">{{ trimText(audio.text, 70) }}</span></td>
             <td>{{ formatDuration(audio.audioDuration) }}</td>
             <td class="actions-column">
-              <button class="play-btn" :aria-label="playButtonLabel"
-                @mouseover="fetchSound(audio.wavFilePath, audio.id)" @click="handlePlayClick(audio.id)"><i
-                  :class="playIconClass"></i></button>
-              <button class="btn btn-info btn-sm me-2">Detail</button>
+              <button class="play-btn" aria-label="Play"
+                @mouseover="fetchSound(audio.wavFilePath, audio.id)" @click="handlePlayClick(audio.id, $event)"><i
+                  class="bi bi-play-fill play-icon"></i></button>
+              <button class="play-btn" aria-label="Download" @click="downloadAudio(audio.wavFilePath, audio.id)"><i
+                  class="bi bi-download"></i></button>
+              <button class="btn btn-info btn-sm">Detail</button>
               <button class="btn btn-danger btn-sm" @click="deleteAudio(audio.id)" aria-label="Delete"><i
                   class="bi bi-trash"></i></button>
             </td>
@@ -44,7 +46,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 
 // For audio list
 const audios = ref([]);
@@ -54,8 +56,8 @@ const showNoAudioMsg = ref(null);
 // For playback
 const audioPlayers = new Map();
 const soundPlaying = ref(false);
-const playIconClass = computed(() => soundPlaying.value ? 'bi bi-pause-fill play-icon' : 'bi bi-play-fill play-icon');
-const playButtonLabel = computed(() => soundPlaying.value ? 'Pause' : 'Play');
+const playIconClass = 'bi bi-play-fill play-icon';
+const pauseIconClass = 'bi bi-pause-fill play-icon';
 
 // Lifecycle methods
 onMounted(() => {
@@ -101,9 +103,10 @@ const deleteAudio = async (id) => {
 
 const fetchSound = async (soundFilePath, audioId) => {
   // Check if audio already cached
-  if (audioPlayers.get(audioId)) {
+  const _player = audioPlayers.get(audioId);
+  if (_player) {
     console.log(`Sound for audio ${audioId} already in cache.`);
-    return;
+    return _player.src; // for download 
   }
   // If not, get it from API
   const encodedPath = encodeURIComponent(soundFilePath);
@@ -117,14 +120,18 @@ const fetchSound = async (soundFilePath, audioId) => {
   const url = URL.createObjectURL(soundData);
   const player = new Audio(url);
   audioPlayers.set(audioId, player);
+  return url;
 }
 
-const handlePlayClick = async (audioId) => {
+const handlePlayClick = async (audioId, event) => {
   const audioPlayer = audioPlayers.get(audioId);
+  const playBtn = event.currentTarget;
   // Handle pause
   if (soundPlaying.value) {
     soundPlaying.value = false;
     audioPlayer.pause();
+    playBtn.setAttribute('aria-label', 'Play');
+    playBtn.querySelector('i').className = playIconClass;
     return;
   }
   // Handle play
@@ -132,13 +139,25 @@ const handlePlayClick = async (audioId) => {
     console.log('sound not yet loaded');
     return;
   }
-  // Set back to play icon when done
+  // Set back to play icon when finished
   audioPlayer.addEventListener('ended', () => {
     soundPlaying.value = false;
+    playBtn.setAttribute('aria-label', 'Play');
+    playBtn.querySelector('i').className = playIconClass;
   });
   // Play sound
   audioPlayer.play();
   soundPlaying.value = true;
+  playBtn.setAttribute('aria-label', 'Pause');
+  playBtn.querySelector('i').className = pauseIconClass;
+}
+
+async function downloadAudio(audioFilePath, audioId) {
+  const blobUrl = await fetchSound(audioFilePath, audioId);
+  const anchor = document.createElement('a');
+  anchor.href = blobUrl;
+  anchor.download = audioId;
+  anchor.click();
 }
 
 // Helper methods
@@ -179,7 +198,7 @@ function formatDuration(seconds) {
 .actions-column {
   display: flex;
   align-items: center;
-  gap: 0.5em;
+  gap: 1em;
   /* Spacing between buttons */
 }
 </style>
