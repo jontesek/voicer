@@ -2,6 +2,8 @@ import { randomUUID } from 'crypto';
 
 import { VOICER_BUCKET, FILES_PATH } from "./settings.js";
 
+import { binaryStreamToBuffer } from './helpers.js';
+
 export class AudioSaver {
     constructor(audioDbModel, s3Client) {
         this.audioDbModel = audioDbModel;
@@ -61,5 +63,17 @@ export class AudioSaver {
         // If worked, remove from DB
         await audio.destroy();
         return {};
+    }
+
+    async getSound(filePath) {
+        let soundStream;
+        try {
+            soundStream = await this.s3Client.getObject(VOICER_BUCKET, filePath);
+        }
+        catch (error) {
+            console.error(error);
+            return { error: { msg: `could not get ${filePath}`, code: 404 } }
+        }
+        return {soundData: await binaryStreamToBuffer(soundStream)};
     }
 }

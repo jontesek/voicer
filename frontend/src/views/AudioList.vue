@@ -23,14 +23,17 @@
         <tbody>
           <tr v-for="audio in audios" :key="audio.id">
             <th scope="row">{{ audio.id }}</th>
-            <td>{{ trimText(audio.title || '', 20)}}</td>
+            <td>{{ trimText(audio.title || '', 20) }}</td>
             <td>{{ trimText(audio.style || '', 30) }}</td>
             <td>{{ trimText(audio.text, 70) }}</td>
             <td>{{ formatDuration(audio.audioDuration) }}</td>
-            <td>
-              <button class="btn btn-info btn-sm me-2">Play</button>
+            <td class="actions-column">
+              <button class="play-btn" :aria-label="playButtonLabel"
+                @mouseover="fetchSound(audio.wavFilePath, audio.id)" @click="handlePlayClick(audio.id)"><i
+                  :class="playIconClass"></i></button>
               <button class="btn btn-info btn-sm me-2">Detail</button>
-              <button class="btn btn-danger btn-sm" @click="deleteAudio(audio.id)">Delete</button>
+              <button class="btn btn-danger btn-sm" @click="deleteAudio(audio.id)" aria-label="Delete"><i
+                  class="bi bi-trash"></i></button>
             </td>
           </tr>
         </tbody>
@@ -41,12 +44,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
-// Reactive variables
+// For audio list
 const audios = ref([]);
 const deleteSuccessMsg = ref(null);
 const showNoAudioMsg = ref(null);
+
+// For playback
+const audioPlayers = new Map();
+const soundPlaying = ref(false);
+const playIconClass = computed(() => soundPlaying.value ? 'bi bi-pause-fill play-icon' : 'bi bi-play-fill play-icon');
+const playButtonLabel = computed(() => soundPlaying.value ? 'Pause' : 'Play');
 
 // Lifecycle methods
 onMounted(() => {
@@ -90,6 +99,48 @@ const deleteAudio = async (id) => {
   }
 }
 
+const fetchSound = async (soundFilePath, audioId) => {
+  // Check if audio already cached
+  if (audioPlayers.get(audioId)) {
+    console.log(`Sound for audio ${audioId} already in cache.`);
+    return;
+  }
+  // If not, get it from API
+  const encodedPath = encodeURIComponent(soundFilePath);
+  const response = await fetch(`/api/getSound?filePath=${encodedPath}`);
+  if (!response.ok) {
+    console.error(await response.text());
+    return;
+  }
+  const soundData = await response.blob();
+  // Save to tmp storage for later playback
+  const url = URL.createObjectURL(soundData);
+  const player = new Audio(url);
+  audioPlayers.set(audioId, player);
+}
+
+const handlePlayClick = async (audioId) => {
+  const audioPlayer = audioPlayers.get(audioId);
+  // Handle pause
+  if (soundPlaying.value) {
+    soundPlaying.value = false;
+    audioPlayer.pause();
+    return;
+  }
+  // Handle play
+  if (!audioPlayer) {
+    console.log('sound not yet loaded');
+    return;
+  }
+  // Set back to play icon when done
+  audioPlayer.addEventListener('ended', () => {
+    soundPlaying.value = false;
+  });
+  // Play sound
+  audioPlayer.play();
+  soundPlaying.value = true;
+}
+
 // Helper methods
 function trimText(text, maxLength) {
   return text.length > maxLength
@@ -112,5 +163,23 @@ function formatDuration(seconds) {
   background-color: #f8f9fa;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.play-btn {
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.play-icon {
+  width: 1em;
+  font-size: 2em;
+}
+
+.actions-column {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  /* Spacing between buttons */
 }
 </style>

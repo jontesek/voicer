@@ -67,12 +67,43 @@ app.get('/api/getAll', async (req, res) => {
 app.delete('/api/delete/:id', async (req, res) => {
   const id = req.params.id;
   const result = await audioSaver.delete(id);
+  // Handle problem
   if ('error' in result) {
     const code = result.error.code;
     res.status(code).json({ error: result.error.msg });
     return;
   }
+  // Return dummy response
   res.json({status: 'ok'});
+});
+
+app.get('/api/getSound', async (req, res) => {
+  const filePath = req.query.filePath;
+  const result = await audioSaver.getSound(filePath);
+  // Handle problem
+  if ('error' in result) {
+    const code = result.error.code;
+    res.status(code).json({ error: result.error.msg });
+    return;
+  }
+  // Find type of the file
+  const fileFormat = filePath.slice(-3);
+  let contentType;
+  if (fileFormat === 'wav') {
+    contentType = 'audio/wav';
+  }
+  else {
+    throw TypeError("unknown file format")
+  }
+  const soundBuffer = result.soundData;
+  // Send in proper format
+  res.set({
+    'Content-Type': contentType,
+    'Content-Disposition': 'inline',
+    'Content-Length': soundBuffer.length,
+  });
+
+  res.send(soundBuffer);
 });
 
 
