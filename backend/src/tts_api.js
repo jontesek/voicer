@@ -59,16 +59,21 @@ export class TtsApi {
             return { error: { status: blockReason, code: 403 } };
         }
 
-        const finishReason = response.candidates?.[0].finishReason;
-        if (finishReason) {
-            return { error: { status: finishReason, code: 403 } };
+        // Check if we have some data
+        let audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+
+        // Check for more blocking
+        if (!audioData) {
+            const finishReason = response.candidates?.[0].finishReason;
+            if (finishReason) {
+                return { error: { status: finishReason, code: 403 } };
+            }
         }
 
         // Parse audio data
-        let audioData = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-        audioData = Buffer.from(audioData, 'base64');   // PCM
-        audioData = await getWavBuffer(audioData);
-        const audioDuration = getWavDuration(audioData);
+        audioData = Buffer.from(audioData, 'base64');   // raw PCM data
+        audioData = await getWavBuffer(audioData);      // add WAV header
+        const audioDuration = getWavDuration(audioData); // in seconds
 
         // Parse metadata
         const rawUsageData = response.usageMetadata;
