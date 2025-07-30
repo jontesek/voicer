@@ -1,0 +1,17 @@
+services:
+  api:
+    build: .      
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+      - node_modules:/usr/src/app/node_modules
+    ports:
+      - "3001:3001"
+    command: ["node", "src/index.js"]
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - ../.env
+
+volumes:
+  node_modules:
