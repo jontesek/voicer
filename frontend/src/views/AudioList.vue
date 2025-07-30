@@ -23,17 +23,20 @@
         <tbody>
           <tr v-for="audio in audios" :key="audio.id">
             <th scope="row">{{ audio.id }}</th>
-            <td><span :title="audio.title.length > 20 ? audio.title : ''">{{ trimText(audio.title || '', 20) }}</span></td>
-            <td><span :title="audio.style.length > 30 ? audio.style : ''">{{ trimText(audio.style || '', 30) }}</span></td>
+            <td><span :title="audio.title.length > 20 ? audio.title : ''">{{ trimText(audio.title || '', 20) }}</span>
+            </td>
+            <td><span :title="audio.style.length > 30 ? audio.style : ''">{{ trimText(audio.style || '', 30) }}</span>
+            </td>
             <td><span :title="audio.text.length > 70 ? audio.text : ''">{{ trimText(audio.text, 70) }}</span></td>
             <td>{{ formatDuration(audio.audioDuration) }}</td>
             <td class="actions-column">
-              <button class="play-btn" aria-label="Play"
-                @mouseover="fetchSound(audio.wavFilePath, audio.id)" @click="handlePlayClick(audio.id, $event)"><i
-                  class="bi bi-play-fill play-icon"></i></button>
+              <button class="play-btn" aria-label="Play" @mouseover="fetchSound(audio.wavFilePath, audio.id)"
+                @click="handlePlayClick(audio.id, $event)"><i class="bi bi-play-fill play-icon"></i></button>
               <button class="play-btn" aria-label="Download" @click="downloadAudio(audio.wavFilePath, audio.id)"><i
                   class="bi bi-download"></i></button>
-              <button class="btn btn-info btn-sm">Detail</button>
+              <router-link :to="{ name: 'audio-detail', params: { id: audio.id } }" class="btn btn-info btn-sm">
+                Detail
+              </router-link>
               <button class="btn btn-danger btn-sm" @click="deleteAudio(audio.id)" aria-label="Delete"><i
                   class="bi bi-trash"></i></button>
             </td>

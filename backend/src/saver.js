@@ -76,4 +76,12 @@ export class AudioSaver {
         }
         return {soundData: await binaryStreamToBuffer(soundStream)};
     }
+
+    async get(audioId) {
+        const audio = await this.audioDbModel.findByPk(audioId);
+        if (!audio) {
+            return { error: { msg: `audio with ID ${audioId} not found`, code: 404 } }
+        }
+        return audio;
+    }
 }

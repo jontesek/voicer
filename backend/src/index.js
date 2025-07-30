@@ -106,6 +106,19 @@ app.get('/api/getSound', async (req, res) => {
   res.send(soundBuffer);
 });
 
+app.get('/api/get/:id', async (req, res) => {
+  const id = req.params.id;
+  const result = await audioSaver.get(id);
+  // Handle problem
+  if ('error' in result) {
+    const code = result.error.code;
+    res.status(code).json({ error: result.error.msg });
+    return;
+  }
+  // Return data
+  res.json(result);
+});
+
 
 // Run API
 app.listen(port, () => {
