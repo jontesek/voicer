@@ -9,8 +9,25 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     volumes:
-      - ./../files/minio:/data  # replace with minio-data to use named volume
+      - ./../files/minio:/data
     command: server /data --console-address ":9090"
 
+  # api:
+  #   build: .      
+  #   working_dir: /usr/src/app
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - node_modules:/usr/src/app/node_modules
+  #     - ./../files/db:/db
+  #   ports:
+  #     - "3000:3000"
+  #   command: ["node", "src/index.js"]
+  #   # command: ["sleep", "infinity"]
+  #   environment:
+  #     - NODE_ENV=development
+  #     - DB_FILE_PATH=/db/voicer.db
+  #   env_file:
+  #     - ../.env
+
 volumes:
-  minio-data:
+  node_modules:
