@@ -1,7 +1,7 @@
 import express from 'express';
 
 import { isValidWav, checkFFmpegInstalled } from './helpers.js';
-import { wavToMp3 } from './converter.js';
+import { Converter } from './converter.js';
 
 // API basics
 const app = express();
@@ -11,6 +11,9 @@ const port = 3001;
 app.use(express.json({ limit: '50mb' }));
 app.use(express.raw({ type: 'audio/wav', limit: '50mb' }));
 
+// Definitions
+const SUPPORTED_FORMATS = { 'mp3': 'audio/mpeg', 'ogg': 'audio/ogg' }
+
 // Endpoints
 app.get('/ping', (req, res) => {
   res.send('pong');
@@ -18,10 +21,9 @@ app.get('/ping', (req, res) => {
 
 app.post('/convert/:format', async (req, res) => {
   const targetFormat = req.params.format;
-  const supportedFormats = ['mp3', 'ogg'];
   // Check target
-  if (!targetFormat || !supportedFormats.includes(targetFormat)) {
-    const msg = `You must provide supported target format: ${supportedFormats}`
+  if (!targetFormat || !Object.keys(SUPPORTED_FORMATS).includes(targetFormat)) {
+    const msg = `You must provide supported target format: ${SUPPORTED_FORMATS}`
     res.status(422).json({ error: msg })
     return;
   }
@@ -41,16 +43,22 @@ app.post('/convert/:format', async (req, res) => {
     return;
   }
   // All good, convert WAV to lossy format
-  let mp3Buffer;
+  const converter = new Converter();
+  let lossyBuffer;
   try {
-    mp3Buffer = await wavToMp3(wavData);
+    if (targetFormat === 'mp3') {
+      lossyBuffer = await converter.wavToMp3(wavData);
+    }
+    else if (targetFormat === 'ogg') {
+      lossyBuffer = await converter.wavToOgg(wavData);
+    }
   } catch (err) {
     console.error(err);
     res.status(500).send('Conversion failed');
   }
   // Send result
-  res.setHeader('Content-Type', 'audio/mpeg');
-  res.send(mp3Buffer);
+  res.setHeader('Content-Type', SUPPORTED_FORMATS[targetFormat]);
+  res.send(lossyBuffer);
 });
 
 // Run API
