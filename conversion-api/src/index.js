@@ -10,6 +10,10 @@ const port = 3001;
 // Middleware
 app.use(express.json({ limit: '50mb' }));
 app.use(express.raw({ type: 'audio/wav', limit: '50mb' }));
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  next();
+});
 
 // Definitions
 const SUPPORTED_FORMATS = { 'mp3': 'audio/mpeg', 'ogg': 'audio/ogg' }
@@ -55,6 +59,7 @@ app.post('/convert/:format', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).send('Conversion failed');
+    return;
   }
   // Send result
   res.setHeader('Content-Type', SUPPORTED_FORMATS[targetFormat]);
