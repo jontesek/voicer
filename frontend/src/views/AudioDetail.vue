@@ -55,22 +55,23 @@
                         <li>Input tokens: {{ audioForm.inputTokenCount }}</li>
                         <li>Output tokens: {{ audioForm.outputTokenCount }}</li>
                         <li>Audio duration: {{ formatDuration(audioForm.audioDuration) }}</li>
-                        <li>Generation duration: {{ formatDuration(audioForm.generationDuration) }}</li>
+                        <li>Generated in: {{ formatDuration(audioForm.generationDuration) }}</li>
                     </ul>
                 </div>
-                <div v-if="audioDataTmpUrl" class="mb-3">
+                <div v-if="audioFileTmpUrl" class="mb-3">
                     <h4>Audio file</h4>
-                    <div>
+                    <div class="audio-file">
                         <audio controls>
-                            <source :src="audioDataTmpUrl" type="audio/wav">
+                            <source :src="audioFileTmpUrl" type="audio/ogg">
                         </audio>
+                        <ul class="download-links">
+                            <li><a :href="audioFileTmpUrl" :download="downloadFileName">Download Ogg</a></li>
+                            <li><a href="#" :download="downloadFileName" @click.prevent="downloadSound('mp3')">Download
+                                    MP3</a></li>
+                            <li><a href="#" :download="downloadFileName" @click.prevent="downloadSound('wav')">Download
+                                    WAV</a></li>
+                        </ul>
                     </div>
-                    <ul>
-                        <li><a :href="audioDataTmpUrl" :download="createFilename(audioForm.title, audioForm.text)">Download WAV</a></li>
-                        <li><a :href="xxx" download="shit">Download MP3</a></li>
-                        <li><a :href="xxx" download="shit">Download OGG</a></li>
-                    </ul>
-
                 </div>
             </form>
         </div>
@@ -78,16 +79,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import { useRoute } from 'vue-router'
 
-import voiceData from '@/data/voices.json';
+import voiceList from '@/data/voices.json';
 
 // Referenced variables
 const idNotFound = ref(false);
-const voices = ref(voiceData);
+const voices = ref(voiceList);
 const audioForm = ref({});
-const audioDataTmpUrl = ref(null);
+const audioFileTmpUrl = ref(undefined);
+const downloadFilePaths = reactive({ wav: '', mp3: '', ogg: '' })
+const downloadFileName = ref('');
 
 // Load data
 const route = useRoute();
@@ -104,8 +107,14 @@ onMounted(async () => {
     }
     // Put data into form
     audioForm.value = { ...response_json };
-    // Get sound
-    audioDataTmpUrl.value = await fetchSound(response_json.wavFilePath);
+    // Get sound for playback
+    audioFileTmpUrl.value = await fetchSound(response_json.oggFilePath);
+    // Save file paths for download
+    downloadFilePaths.ogg = response_json.oggFilePath;
+    downloadFilePaths.mp3 = response_json.mp3FilePath;
+    downloadFilePaths.wav = response_json.wavFilePath;
+    // Set file name - extension based on Content-Type in Object URL
+    downloadFileName.value = createFilename(audioId, audioForm.value.title, audioForm.value.text);
 })
 
 const fetchSound = async (soundFilePath) => {
@@ -121,13 +130,31 @@ const fetchSound = async (soundFilePath) => {
     return URL.createObjectURL(soundData);
 }
 
+async function downloadSound(fileFormat) {
+    // Get file from storage
+    const url = await fetchSound(downloadFilePaths[fileFormat]);
+    // Make another link for download
+    const tempLink = document.createElement('a');
+    tempLink.href = url;
+    tempLink.download = downloadFileName.value;
+    document.body.appendChild(tempLink);
+    tempLink.click();   // trigger download
+    document.body.removeChild(tempLink);
+    // Cleanup
+    setTimeout(() => {
+        URL.revokeObjectURL(url);
+        console.log('Object URL revoked after delay.');
+    }, 500);
+}
+
 // Other helpers
-function createFilename(title, text) {
+function createFilename(audioId, title, text) {
+    let name = audioId + "_";
     if (title.length > 0) {
-        return title;
+        return name + title;
     }
     else {
-        return text.slice(0, 10);
+        return name + text.slice(0, 10);
     }
 }
 
@@ -160,5 +187,21 @@ function formatDuration(seconds) {
 
 #audioText {
     height: 200px;
+}
+
+.audio-file {
+    display: flex;
+    align-items: center;
+}
+
+.audio-file ul {
+    display: inline;
+    margin: 0 0 0 20px;
+    padding: 0;
+}
+
+.audio-file li {
+    display: inline;
+    margin-right: 20px;
 }
 </style>

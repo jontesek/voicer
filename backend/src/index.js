@@ -27,6 +27,9 @@ const s3Client = new Minio.Client({
 });
 const audioSaver = new AudioSaver(audioDbModel, s3Client);
 
+// Definitions
+const AUDIO_CONTENT_TYPES = {wav: 'audio/wav', mp3: 'audio/mpeg', ogg: 'audio/ogg'};
+
 // Update DB
 // await dbConn.sync();
 // process.exit();
@@ -86,23 +89,19 @@ app.get('/api/getSound', async (req, res) => {
     res.status(code).json({ error: result.error.msg });
     return;
   }
-  // Find type of the file
+  // Get file type
   const fileFormat = filePath.slice(-3);
-  let contentType;
-  if (fileFormat === 'wav') {
-    contentType = 'audio/wav';
-  }
-  else {
-    throw TypeError("unknown file format")
+  const contentType = AUDIO_CONTENT_TYPES[fileFormat];
+  if (!contentType) {
+    res.status(415).json({ error: "Unsupported file type" });
+    return;
   }
   const soundBuffer = result.soundData;
   // Send in proper format
   res.set({
     'Content-Type': contentType,
     'Content-Disposition': 'inline',
-    'Content-Length': soundBuffer.length,
   });
-
   res.send(soundBuffer);
 });
 
