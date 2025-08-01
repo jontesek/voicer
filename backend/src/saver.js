@@ -1,13 +1,26 @@
 import { randomUUID } from 'crypto';
 
-import { VOICER_BUCKET, FILES_PATH } from "./settings.js";
+import { VOICER_BUCKET, FILES_PATH, CONVERTER_API_URL } from "./settings.js";
 
 import { binaryStreamToBuffer } from './helpers.js';
+import { convertToLossy } from './convert.js';
+
 
 export class AudioSaver {
     constructor(audioDbModel, s3Client) {
         this.audioDbModel = audioDbModel;
         this.s3Client = s3Client;
+    }
+
+    async #convertToLossy(fileUuid, wavData, targetFormat) {
+        // Get data
+        console.debug('convertToLossy.start', targetFormat);
+        const lossyBuffer = await convertToLossy(CONVERTER_API_URL, wavData, targetFormat)
+        // Save data
+        const filePath = `/${FILES_PATH}/${fileUuid}.${targetFormat}`;
+        await this.s3Client.putObject(VOICER_BUCKET, filePath, lossyBuffer);
+        console.log(`Audio file uploaded to S3: ${filePath}`);
+        return filePath;
     }
 
     async saveNew(generationInputs, generatedMetadata, generatedWav) {
@@ -34,6 +47,10 @@ export class AudioSaver {
         await this.s3Client.putObject(VOICER_BUCKET, filePath, decodedWav);
         console.log(`audio file uploaded to s3: ${filePath}`);
         audioRow.wavFilePath = filePath;
+
+        // Encode to lossy formats
+        audioRow.mp3FilePath = await this.#convertToLossy(fileUuid, decodedWav, 'mp3');
+        audioRow.oggFilePath = await this.#convertToLossy(fileUuid, decodedWav, 'ogg');
 
         // If upload worked, save to DB
         await audioRow.save();
@@ -74,7 +91,7 @@ export class AudioSaver {
             console.error(error);
             return { error: { msg: `could not get ${filePath}`, code: 404 } }
         }
-        return {soundData: await binaryStreamToBuffer(soundStream)};
+        return { soundData: await binaryStreamToBuffer(soundStream) };
     }
 
     async get(audioId) {

@@ -3,7 +3,7 @@ const Minio = await import ('minio'); // minio has no default export
 
 import { AudioSaver } from './saver.js';
 import { TtsApi } from './tts_api.js';
-import { GEMINI_API_KEY, DB_FILE_PATH } from './settings.js';
+import { GEMINI_API_KEY, DB_FILE_PATH, MINIO_HOST } from './settings.js';
 import { readJsonFile, sleep } from './helpers.js';
 import { getDbConnection, defineAudioModel } from './database.js';
 
@@ -19,7 +19,7 @@ const ttsApi = new TtsApi(GEMINI_API_KEY);
 const dbConn = getDbConnection(DB_FILE_PATH);
 const audioDbModel = defineAudioModel(dbConn);
 const s3Client = new Minio.Client({
-  endPoint: 'localhost',
+  endPoint: MINIO_HOST,
   port: 9000,
   useSSL: false,
   accessKey: 'minioadmin',
