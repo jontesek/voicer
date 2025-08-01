@@ -4,6 +4,11 @@ import { spawn } from 'child_process';
 
 export async function isValidWav(requestBody) {
   return new Promise((resolve) => {
+
+    if (!requestBody) {
+      resolve(false);
+    }
+
     const reader = new wav.Reader();
 
     reader.on('format', (format) => {
