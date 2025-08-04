@@ -23,11 +23,11 @@
         <tbody>
           <tr v-for="audio in audios" :key="audio.id">
             <th scope="row">{{ audio.id }}</th>
-            <td><span :title="audio.title.length > 20 ? audio.title : ''">{{ trimText(audio.title || '', 20) }}</span>
+            <td><span :title="audio.title.length > MAX_TITLE_LENGTH ? audio.title : ''">{{ trimText(audio.title || '', MAX_TITLE_LENGTH) }}</span>
             </td>
-            <td><span :title="audio.style.length > 30 ? audio.style : ''">{{ trimText(audio.style || '', 30) }}</span>
+            <td><span :title="audio.style.length > MAX_STYLE_LENGTH ? audio.style : ''">{{ trimText(audio.style || '', MAX_STYLE_LENGTH) }}</span>
             </td>
-            <td><span :title="audio.text.length > 70 ? audio.text : ''">{{ trimText(audio.text, 70) }}</span></td>
+            <td><span :title="audio.text.length > MAX_TEXT_LENGTH ? audio.text : ''">{{ trimText(audio.text, MAX_TEXT_LENGTH) }}</span></td>
             <td>{{ formatDuration(audio.audioDuration) }}</td>
             <td class="actions-column">
               <button class="play-btn" aria-label="Play" @mouseover="fetchSound(audio.wavFilePath, audio.id)"
@@ -50,6 +50,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+
+// Constants
+const MAX_TITLE_LENGTH = 20;
+const MAX_STYLE_LENGTH = 30;
+const MAX_TEXT_LENGTH = 70;
 
 // For audio list
 const audios = ref([]);
