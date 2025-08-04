@@ -137,9 +137,7 @@ async function downloadSound(fileFormat) {
     const tempLink = document.createElement('a');
     tempLink.href = url;
     tempLink.download = downloadFileName.value;
-    document.body.appendChild(tempLink);
     tempLink.click();   // trigger download
-    document.body.removeChild(tempLink);
     // Cleanup
     setTimeout(() => {
         URL.revokeObjectURL(url);
