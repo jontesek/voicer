@@ -30,7 +30,7 @@
             <td><span :title="audio.text.length > MAX_TEXT_LENGTH ? audio.text : ''">{{ trimText(audio.text, MAX_TEXT_LENGTH) }}</span></td>
             <td>{{ formatDuration(audio.audioDuration) }}</td>
             <td class="actions-column">
-              <button class="play-btn" aria-label="Play" @mouseover="fetchSound(audio.wavFilePath, audio.id)"
+              <button class="play-btn" aria-label="Play" @mouseover="fetchSound(audio.oggFilePath, audio.id)"
                 @click="handlePlayClick(audio.id, $event)"><i class="bi bi-play-fill play-icon"></i></button>
               <button class="play-btn" aria-label="Download" @click="downloadAudio(audio.wavFilePath, audio.id)"><i
                   class="bi bi-download"></i></button>
