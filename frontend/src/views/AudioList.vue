@@ -144,8 +144,9 @@ const handlePlayClick = async (audioId, event) => {
   }
   // Handle play
   if (!audioPlayer) {
-    console.log('sound not yet loaded');
-    return;
+    console.log('Sound not yet loaded');
+    await new Promise(resolve => setTimeout(resolve, 500));
+    console.log('Sound loaded after sleep');
   }
   // Set back to play icon when finished
   audioPlayer.addEventListener('ended', () => {
