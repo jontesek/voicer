@@ -72,12 +72,13 @@ export class AudioSaver {
         // Get data
         const audio = await this.audioDbModel.findByPk(audioId);
         if (!audio) {
-            return { error: { msg: `audio with ID ${audioId} not found`, code: 404 } }
+            return { error: { msg: `Audio with ID ${audioId} not found`, code: 404 } }
         }
         // Remove from object storage
-        const wavFilePath = audio.wavFilePath;
-        await this.s3Client.removeObject(VOICER_BUCKET, wavFilePath);
-        // If worked, remove from DB
+        await this.s3Client.removeObject(VOICER_BUCKET, audio.wavFilePath);
+        await this.s3Client.removeObject(VOICER_BUCKET, audio.mp3FilePath);
+        await this.s3Client.removeObject(VOICER_BUCKET, audio.oggFilePath);
+        // Remove from DB
         await audio.destroy();
         return {};
     }
