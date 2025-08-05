@@ -62,10 +62,10 @@
         </form>
         <div v-if="generatedWav" class="mt-3">
             <h4>Processing details</h4>
-            Real input tokens: {{ genInfo.inputTokenCount }}, Real output
-            tokens: {{ genInfo.outputTokenCount }}, Audio duration: {{ formatDuration(genInfo.audioDuration) }},
-            Generated in: {{ formatDuration(genInfo.generationDuration) }}
-            <h4 class="mt-2">Audio file</h4>
+            Real input tokens: {{ generatedMetadata.inputTokenCount }}, Real output
+            tokens: {{ generatedMetadata.outputTokenCount }}, Audio duration: {{ formatDuration(generatedMetadata.audioDuration) }},
+            Generated in: {{ formatDuration(generatedMetadata.generationDuration) }}
+            <h4 class="mt-3">Audio file</h4>
             <div class="audio-file mb-4">
                 <audio :src="audioPrefix + generatedWav" controls />
                 <ul>
@@ -126,7 +126,7 @@ const genInfo = ref(null);
 const genInfoType = ref(null);
 const genBtnDisabled = ref(false);
 const audioPrefix = 'data:audio/wav;base64,';
-let generatedMetadata = null;
+const generatedMetadata = ref(null);
 const cancelGenerate = ref(false);
 const saveToStorageSuccessId = ref(null);
 const saveToStorageError = ref(null);
@@ -159,8 +159,9 @@ const generateAudio = async () => {
         cancelGenerate.value = false;
         return;
     }
-    // Enable button
+    // Reset generating
     genBtnDisabled.value = false;
+    genInfoType.value = null;
     // Backend failure
     if (response.status >= 500) {
         genInfo.value = "Problem with backend.";
@@ -175,9 +176,8 @@ const generateAudio = async () => {
         return;
     }
     // All good
-    genInfo.value = responseData.metadata;
-    generatedMetadata = responseData.metadata;
     generatedWav.value = responseData.wavData;
+    generatedMetadata.value = responseData.metadata;
     // Prepare tooltip - wait for DOM refresh
     nextTick(() => {
         const tooltips = document.getElementsByClassName('convert-tooltip');
@@ -230,7 +230,7 @@ const saveToStorage = async () => {
     const reqData = {
         generationInputs: toRaw(audioForm),
         generatedWav: generatedWav.value,
-        generatedMetadata: generatedMetadata
+        generatedMetadata: generatedMetadata.value
     }
     console.log(reqData);
     // Send request
