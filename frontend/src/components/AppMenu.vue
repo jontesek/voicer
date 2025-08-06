@@ -12,6 +12,9 @@
           <li class="nav-item">
             <router-link to="/audio-list" class="nav-link" active-class="active">Audio List</router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/account-stats" class="nav-link" active-class="active">Account stats</router-link>
+          </li>
           </ul>
       </div>
     </div>

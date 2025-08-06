@@ -35,3 +35,19 @@ export function defineAudioModel(dbConn) {
         oggFilePath: DataTypes.STRING,
     }, { freezeTableName: true });
 }
+
+export function defineTtsRequestModel(dbConn) {
+    return dbConn.define('TtsRequest', {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+        },
+        model: DataTypes.STRING,
+        styleLength: DataTypes.SMALLINT,
+        textLength: DataTypes.SMALLINT,
+        success: DataTypes.BOOLEAN,
+    }, {
+        freezeTableName: true, indexes: [{ fields: ['createdAt'] }]
+    });
+}
