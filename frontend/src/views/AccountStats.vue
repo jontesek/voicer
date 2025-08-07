@@ -41,18 +41,18 @@ const requestCountSinceReset = ref(null);
 const resetDt = new Date();
 resetDt.setUTCHours(7, 0, 0, 0);
 
-const localResetTimeString = new Intl.DateTimeFormat('default', {
+const localResetTimeString = new Intl.DateTimeFormat(undefined, {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
 }).format(resetDt);
-const localResetDtString = new Intl.DateTimeFormat('default', {
+const localResetDtString = new Intl.DateTimeFormat(undefined, {
     dateStyle: 'short',
     timeStyle: 'short'
 }).format(resetDt);
 
 const nextResetDt = new Date(resetDt.getTime() + DAY_MILISECONDS)
-const nextLocalResetDtString = new Intl.DateTimeFormat('default', {
+const nextLocalResetDtString = new Intl.DateTimeFormat(undefined, {
     dateStyle: 'short',
     timeStyle: 'short'
 }).format(nextResetDt);
