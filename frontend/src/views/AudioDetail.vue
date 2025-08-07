@@ -49,6 +49,7 @@
                     <label for="audioText" class="form-label fw-bold">Text:</label>
                     <textarea class="form-control" id="audioText" v-model="audioForm.text" required></textarea>
                 </div>
+            </form>
                 <div class="mb-3">
                     <h4>Metadata</h4>
                     <ul>
@@ -73,14 +74,16 @@
                         </ul>
                     </div>
                 </div>
-            </form>
+                <div class="mt-4">
+                    <button @click="deleteAudio" type="button" class="btn btn-danger">Delete audio</button>
+                </div>
         </div>
     </div>
 </template>
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue';
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import voiceList from '@/data/voices.json';
 
@@ -94,6 +97,7 @@ const downloadFileName = ref('');
 
 // Load data
 const route = useRoute();
+const router = useRouter();
 const audioId = route.params.id;
 
 onMounted(async () => {
@@ -143,6 +147,22 @@ async function downloadSound(fileFormat) {
         URL.revokeObjectURL(url);
         console.log('Object URL revoked after delay.');
     }, 500);
+}
+
+// Delete audio
+async function deleteAudio() {
+    const confirmMsg = `Do you really want to delete audio with ID ${audioId}?`;
+    const confirmed = window.confirm(confirmMsg);
+    if (!confirmed) {
+        return;
+    }
+    const response = await fetch(`/api/delete/${audioId}`, { method: 'DELETE' });
+    if (response.ok) {
+        router.push({ name: 'AudioList', query: { deletedAudioId: audioId } })
+    }
+    else {
+        console.error(await response.text());
+    }
 }
 
 // Other helpers

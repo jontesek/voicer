@@ -2,10 +2,10 @@
   <div class="audio-list-page">
     <h2 class="mb-4">Your Audio List</h2>
 
-    <div v-if="deleteSuccessMsg" class="alert alert-info">{{ deleteSuccessMsg }}</div>
+    <div v-if="deletedAudioId" class="alert alert-info"> Audio with id {{deletedAudioId}} was deleted.</div>
 
     <div v-if="showNoAudioMsg" class="alert alert-info" role="alert">
-      No audio files found. Go to "Create Audio" to add some!
+      No audio files found. Go to <router-link to="/create-audio">Create Audio</router-link> to add some!
     </div>
 
     <div v-if="audios.length > 0" class="table-responsive mb-5" style="overflow: visible">
@@ -47,7 +47,7 @@
                 </div>
               </div>
 
-              <router-link :to="{ name: 'audio-detail', params: { id: audio.id } }" class="btn btn-info btn-sm">
+              <router-link :to="{ name: 'AudioDetail', params: { id: audio.id } }" class="btn btn-info btn-sm">
                 Detail
               </router-link>
 
@@ -63,6 +63,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router'
 
 // Constants
 const MAX_TITLE_LENGTH = 20;
@@ -73,7 +74,7 @@ const FILE_NAME_TEXT_LENGTH = 10;
 
 // For audio list
 const audios = ref([]);
-const deleteSuccessMsg = ref(null);
+const deletedAudioId = ref(null);
 const showNoAudioMsg = ref(false);
 const activeDownloadMenuId = ref(null);
 
@@ -82,6 +83,13 @@ const audioPlayers = new Map();
 const soundPlaying = ref(false);
 const playIconClass = 'bi bi-play-fill play-icon';
 const pauseIconClass = 'bi bi-pause-fill play-icon';
+
+// Check for redirect messages
+const route = useRoute();
+const redirectDeletedAudioId = route.query.deletedAudioId;
+if (redirectDeletedAudioId) {
+  deletedAudioId.value = redirectDeletedAudioId;
+}
 
 // Lifecycle
 onMounted(() => {
@@ -113,7 +121,7 @@ const deleteAudio = async (id) => {
       method: 'DELETE'
     });
     if (response.ok) {
-      deleteSuccessMsg.value = `Audio with id ${id} was deleted.`
+      deletedAudioId.value = id;
       audios.value = audios.value.filter(audio => audio.id !== id)
     }
     else {
