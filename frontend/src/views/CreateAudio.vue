@@ -83,7 +83,7 @@
             <div>
                 <button @click="saveToStorage" class="btn btn-success me-3" type="button">Save to storage</button>
                 <span v-if="saveToStorageInProcess">Saving...</span>
-                <span v-if="saveToStorageSuccessId">Saved to storage with ID {{ saveToStorageSuccessId }}: <router-link :to="{ name: 'audio-detail', params: { id: saveToStorageSuccessId } }">see detail</router-link></span>
+                <span v-if="saveToStorageSuccessId">Saved to storage with ID {{ saveToStorageSuccessId }}: <router-link :to="{ name: 'AudioDetail', params: { id: saveToStorageSuccessId } }">see detail</router-link></span>
                 <span v-if="saveToStorageError" class="text-danger">Error while saving to storage: {{ saveToStorageError }}</span>
             </div>
         </div>

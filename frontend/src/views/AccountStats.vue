@@ -1,7 +1,7 @@
 <template>
 
     <div class="content-page">
-        <h2>Account stats</h2>
+        <h2>Your Account Stats</h2>
 
         <h3>Gemini API usage</h3>
         <p>Check your statistics at <a href="https://aistudio.google.com/usage">Google AI Studio</a>:

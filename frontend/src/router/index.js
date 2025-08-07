@@ -9,22 +9,22 @@ const router = createRouter({
   routes: [
     {
       path: '/create-audio',
-      name: 'create-audio',
+      name: 'CreateAudio',
       component: CreateAudio
     },
     {
       path: '/audio-list',
-      name: 'audio-list',
+      name: 'AudioList',
       component: AudioList
     },
     {
       path: '/audio-detail/:id',
-      name: 'audio-detail',
+      name: 'AudioDetail',
       component: AudioDetail
     },
     {
       path: '/account-stats',
-      name: 'account-stats',
+      name: 'AccountStats',
       component: AccountStats
     }
   ],
