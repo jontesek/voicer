@@ -65,12 +65,13 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router'
 
+import { createFilename } from '@/utils/createFilename';
+
 // Constants
 const MAX_TITLE_LENGTH = 20;
 const MAX_STYLE_LENGTH = 30;
 const MAX_TEXT_LENGTH = 70;
 const DEFAULT_FETCH_FORMAT = 'ogg';
-const FILE_NAME_TEXT_LENGTH = 10;
 
 // For audio list
 const audios = ref([]);
@@ -193,7 +194,7 @@ async function downloadAudio(audioFilePath, audio) {
   const blobUrl = await fetchSound(audioFilePath, audio.id, false);
   const anchor = document.createElement('a');
   anchor.href = blobUrl;
-  anchor.download = createFilename(audio.id, audio.title, audio.text);
+  anchor.download = createFilename(audio.title, audio.text, audio.id, audio.createdAt);
   anchor.click();
   setTimeout(() => { URL.revokeObjectURL(blobUrl); }, 500);
 }
@@ -210,15 +211,6 @@ function closeDownloadFormatMenu() {
 }
 
 // Helpers
-function createFilename(audioId, title, text) {
-  let name = audioId + "_";
-  if (title.length > 0) {
-    return name + title;
-  }
-  else {
-    return name + text.slice(0, FILE_NAME_TEXT_LENGTH);
-  }
-}
 
 function trimText(text, maxLength) {
   return text.length > maxLength

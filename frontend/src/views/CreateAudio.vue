@@ -94,8 +94,10 @@
 import { reactive, ref, onMounted, toRaw, nextTick } from 'vue';
 import { Tooltip } from 'bootstrap';
 import { Tiktoken } from 'js-tiktoken/lite';
-import voiceData from '@/data/voices.json';
 import Choices from 'choices.js'
+
+import voiceData from '@/data/voices.json';
+import { createFilename } from '@/utils/createFilename';
 
 // Preparation
 let tiktokenEncoder;
@@ -222,16 +224,6 @@ function isTokenCountOverLimit() {
 
 function getOutputTokenCount(inputCount) {
     return inputCount * 5;
-}
-
-// Other helpers
-function createFilename(title, text) {
-    if (title.length > 0) {
-        return title;
-    }
-    else {
-        return text.slice(0, 10);
-    }
 }
 
 // Saving

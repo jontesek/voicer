@@ -85,6 +85,7 @@
 import { ref, onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router'
 
+import { createFilename } from '@/utils/createFilename';
 import voiceList from '@/data/voices.json';
 
 // Referenced variables
@@ -111,6 +112,7 @@ onMounted(async () => {
     }
     // Put data into form
     audioForm.value = { ...response_json };
+    console.log(response_json);
     // Get sound for playback
     audioFileTmpUrl.value = await fetchSound(response_json.oggFilePath);
     // Save file paths for download
@@ -118,7 +120,7 @@ onMounted(async () => {
     downloadFilePaths.mp3 = response_json.mp3FilePath;
     downloadFilePaths.wav = response_json.wavFilePath;
     // Set file name - extension based on Content-Type in Object URL
-    downloadFileName.value = createFilename(audioId, audioForm.value.title, audioForm.value.text);
+    downloadFileName.value = createFilename(audioForm.value.title, audioForm.value.text, audioId, audioForm.value.createdAt);
 })
 
 const fetchSound = async (soundFilePath) => {
@@ -166,23 +168,13 @@ async function deleteAudio() {
 }
 
 // Other helpers
-function createFilename(audioId, title, text) {
-    let name = audioId + "_";
-    if (title.length > 0) {
-        return name + title;
-    }
-    else {
-        return name + text.slice(0, 10);
-    }
-}
-
 function formatDatetime(dateString) {
     if (!dateString) {
         return;
     }
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('cs-CZ', {
-        dateStyle: 'medium',
+    return new Intl.DateTimeFormat(undefined, {
+        dateStyle: 'short',
         timeStyle: 'short',
     }).format(date);
 }
