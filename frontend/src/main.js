@@ -18,3 +18,6 @@ app.mount('#app')
 // Import Bootstrap JavaScript bundle (includes Popper.js)
 // Do it now so it's loaded in app
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+// Select box search
+import "choices.js/public/assets/styles/choices.css";

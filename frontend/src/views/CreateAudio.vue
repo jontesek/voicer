@@ -23,7 +23,7 @@
                 <label for="voiceSelect" class="me-1 fw-bold">Voice name:</label>
                 <select id="voiceSelect" class="form-select" v-model="audioForm.voiceName">
                     <option v-for="voice in voices" :key="voice.name" :value="voice.name">
-                        {{ voice.name }} - {{ voice.mood }}, {{ voice.pitch }} pitch
+                        {{ voice.name }} - {{ voice.gender}}, {{ voice.mood }}, {{ voice.pitch }} pitch
                     </option>
                 </select>
             </div>
@@ -95,15 +95,30 @@ import { reactive, ref, onMounted, toRaw, nextTick } from 'vue';
 import { Tooltip } from 'bootstrap';
 import { Tiktoken } from 'js-tiktoken/lite';
 import voiceData from '@/data/voices.json';
+import Choices from 'choices.js'
 
 // Preparation
 let tiktokenEncoder;
 
+const choiceOptions = {
+    searchResultLimit: -1,
+    shouldSort: false,
+    fuseOptions: {
+      includeScore: true,
+      threshold: 0.5,
+      //ignoreLocation: false
+    }
+}
+
+// Lifecycle
 onMounted(async () => {
     // Prepare tokenizer
     const res = await fetch('https://tiktoken.pages.dev/js/o200k_base.json');
     const encoding = await res.json();
     tiktokenEncoder = new Tiktoken(encoding);
+    // Prepare voice select
+    const element = document.getElementById('voiceSelect');
+    new Choices(element, choiceOptions);
 });
 
 // Reactive state for the form data
@@ -116,7 +131,7 @@ const audioForm = reactive({
     style: ''
 });
 
-// Voice list
+// Load data for Voice select
 const voices = ref(voiceData);
 
 // UI variables

@@ -1,14 +1,38 @@
 [
     {
         "name": "Zephyr",
-        "mood": "Bright",
-        "pitch": "Higher",
+        "mood": "bright",
+        "pitch": "higher",
         "gender": "female"
     },
     {
         "name": "Puck",
-        "mood": "Upbeat",
-        "pitch": "Middle",
+        "mood": "upbeat",
+        "pitch": "middle",
         "gender": "male"
+    },
+    {
+        "name": "Charon",
+        "mood": "informative",
+        "pitch": "lower",
+        "gender": "male"
+    },
+    {
+        "name": "Kore",
+        "mood": "firm",
+        "pitch": "middle",
+        "gender": "female"
+    },
+    {
+        "name": "Fenrir",
+        "mood": "excitable",
+        "pitch": "lower",
+        "gender": "male"
+    },
+    {
+        "name": "Leda",
+        "mood": "youthful",
+        "pitch": "higher",
+        "gender": "female"
     }
 ]
