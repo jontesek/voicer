@@ -96,8 +96,10 @@ import { Tooltip } from 'bootstrap';
 import { Tiktoken } from 'js-tiktoken/lite';
 import Choices from 'choices.js'
 
-import voiceData from '@/data/voices.json';
 import { createFilename } from '@/utils/createFilename';
+import { formatDuration } from '@/utils/formatDuration';
+
+import voiceData from '@/data/voices.json';
 
 // Preparation
 let tiktokenEncoder;
@@ -204,31 +206,13 @@ const generateAudio = async () => {
     });
 };
 
-// Method to count tokens
-function getInputTokenCount() {
-    const prompt = audioForm.style + "\n\n" + audioForm.text;
-    return countTokens(prompt);
+function handleCancel() {
+    showGenInfo.value = false;
+    genBtnDisabled.value = false;
+    cancelGenerate.value = true;
 }
 
-function countTokens(str) {
-    if (!tiktokenEncoder) return 0;
-    return tiktokenEncoder.encode(str).length;
-}
-
-function isTokenCountOverLimit() {
-    // Add some slack to allow for mismatch with Gemini parser
-    const margin = Math.ceil(MAX_TOKEN_COUNT * 0.01);
-    const count = getInputTokenCount() + margin;
-    return count > MAX_TOKEN_COUNT;
-}
-
-function getOutputTokenCount(inputCount) {
-    return inputCount * 5;
-}
-
-// Saving
 const saveToStorage = async () => {
-    console.log('Clicked!');
     // Reset all
     saveToStorageInProcess.value = true;
     saveToStorageError.value = undefined;
@@ -257,6 +241,7 @@ const saveToStorage = async () => {
     }
 }
 
+// Downloading
 function base64ToArrayBuffer(base64String) {
     // Remove the data URI prefix if present
     const base64 = base64String.split(',')[1] || base64String;
@@ -323,16 +308,26 @@ async function downloadWav() {
     }, 500);
 }
 
-function formatDuration(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+// Token count
+function getInputTokenCount() {
+    const prompt = audioForm.style + "\n\n" + audioForm.text;
+    return countTokens(prompt);
 }
 
-function handleCancel() {
-    showGenInfo.value = false;
-    genBtnDisabled.value = false;
-    cancelGenerate.value = true;
+function countTokens(str) {
+    if (!tiktokenEncoder) return 0;
+    return tiktokenEncoder.encode(str).length;
+}
+
+function isTokenCountOverLimit() {
+    // Add some slack to allow for mismatch with Gemini parser
+    const margin = Math.ceil(MAX_TOKEN_COUNT * 0.01);
+    const count = getInputTokenCount() + margin;
+    return count > MAX_TOKEN_COUNT;
+}
+
+function getOutputTokenCount(inputCount) {
+    return inputCount * 5;
 }
 
 </script>

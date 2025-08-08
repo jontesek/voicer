@@ -86,6 +86,9 @@ import { ref, onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router'
 
 import { createFilename } from '@/utils/createFilename';
+import { formatDatetime } from '@/utils/formatDatetime';
+import { formatDuration } from '@/utils/formatDuration';
+
 import voiceList from '@/data/voices.json';
 
 // Referenced variables
@@ -102,8 +105,12 @@ const router = useRouter();
 const audioId = route.params.id;
 
 onMounted(async () => {
+    fetchAudio(audioId);
+})
+
+const fetchAudio = async (id) => {
     // Get data
-    const response = await fetch(`/api/get/${audioId}`);
+    const response = await fetch(`/api/get/${id}`);
     const response_json = await response.json();
     if (!response.ok) {
         console.error(response_json.error);
@@ -121,7 +128,7 @@ onMounted(async () => {
     downloadFilePaths.wav = response_json.wavFilePath;
     // Set file name - extension based on Content-Type in Object URL
     downloadFileName.value = createFilename(audioForm.value.title, audioForm.value.text, audioId, audioForm.value.createdAt);
-})
+}
 
 const fetchSound = async (soundFilePath) => {
     // Get file from API
@@ -151,7 +158,6 @@ async function downloadSound(fileFormat) {
     }, 500);
 }
 
-// Delete audio
 async function deleteAudio() {
     const confirmMsg = `Do you really want to delete audio with ID ${audioId}?`;
     const confirmed = window.confirm(confirmMsg);
@@ -165,24 +171,6 @@ async function deleteAudio() {
     else {
         console.error(await response.text());
     }
-}
-
-// Other helpers
-function formatDatetime(dateString) {
-    if (!dateString) {
-        return;
-    }
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat(undefined, {
-        dateStyle: 'short',
-        timeStyle: 'short',
-    }).format(date);
-}
-
-function formatDuration(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
 </script>

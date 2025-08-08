@@ -30,6 +30,8 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 
+import { formatDatetime } from '@/utils/formatDatetime';
+
 // Constants
 const DAY_MILISECONDS = 24 * 60 * 60 * 1000;
 
@@ -46,16 +48,10 @@ const localResetTimeString = new Intl.DateTimeFormat(undefined, {
     minute: '2-digit',
     hour12: false,
 }).format(resetDt);
-const localResetDtString = new Intl.DateTimeFormat(undefined, {
-    dateStyle: 'short',
-    timeStyle: 'short'
-}).format(resetDt);
+const localResetDtString = formatDatetime(resetDt);
 
 const nextResetDt = new Date(resetDt.getTime() + DAY_MILISECONDS)
-const nextLocalResetDtString = new Intl.DateTimeFormat(undefined, {
-    dateStyle: 'short',
-    timeStyle: 'short'
-}).format(nextResetDt);
+const nextLocalResetDtString = formatDatetime(nextResetDt);
 
 // Lifecycle
 onMounted(async () => {

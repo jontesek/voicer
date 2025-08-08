@@ -66,6 +66,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router'
 
 import { createFilename } from '@/utils/createFilename';
+import { formatDuration } from '@/utils/formatDuration';
 
 // Constants
 const MAX_TITLE_LENGTH = 20;
@@ -159,7 +160,7 @@ const fetchSound = async (soundFilePath, audioId, updateCache) => {
   return url;
 }
 
-/* Interaction */
+// Interaction
 const handlePlayClick = async (audioId, event) => {
   const audioPlayer = audioPlayers.get(audioId);
   const playBtn = event.currentTarget;
@@ -190,6 +191,7 @@ const handlePlayClick = async (audioId, event) => {
   playBtn.querySelector('i').className = pauseIconClass;
 }
 
+// Downloading
 async function downloadAudio(audioFilePath, audio) {
   const blobUrl = await fetchSound(audioFilePath, audio.id, false);
   const anchor = document.createElement('a');
@@ -211,17 +213,10 @@ function closeDownloadFormatMenu() {
 }
 
 // Helpers
-
 function trimText(text, maxLength) {
   return text.length > maxLength
     ? text.substring(0, maxLength - 3) + '...'
     : text;
-}
-
-function formatDuration(seconds) {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
 </script>
