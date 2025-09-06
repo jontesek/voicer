@@ -102,4 +102,16 @@ export class AudioSaver {
         }
         return audio;
     }
+
+    async update(audioId, title) {
+        const audio = await this.audioDbModel.findByPk(audioId);
+        if (!audio) {
+            return { error: { msg: `audio with ID ${audioId} not found`, code: 404 } }
+        }
+        if (title !== null) {
+            audio.title = title;
+        } 
+        await audio.save();
+        return audio;
+    }
 }

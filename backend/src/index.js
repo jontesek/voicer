@@ -153,6 +153,17 @@ app.get('/api/request-count', async (req, res) => {
   res.send(count);
 });
 
+app.patch('/api/audios/:id', async (req, res) => {
+  const id = req.params.id;
+  const title = req.body.title;
+  const result = await audioSaver.update(id, title);
+  if ('error' in result) {
+    res.status(result.error.code).json({ error: result.error.msg });
+    return;
+  }
+  res.send('ok');
+});
+
 
 // Run API
 app.listen(port, () => {

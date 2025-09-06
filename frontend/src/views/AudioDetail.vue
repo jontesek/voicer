@@ -6,8 +6,7 @@
 
         <div v-else>
 
-            <p>Created at: {{ formatDatetime(audioForm.createdAt) }}<br>
-                Updated at: {{ formatDatetime(audioForm.createdAt) }}</p>
+            <div v-if="audioUpdated" class="alert alert-success" role="alert">Audio updated in database.</div>
 
             <form @submit.prevent="generateAudio">
                 <div class="mb-3">
@@ -75,6 +74,7 @@
                     </div>
                 </div>
                 <div class="mt-4">
+                <button @click="updateAudio" type="button" class="btn btn-primary me-5">Update title</button>
                     <button @click="deleteAudio" type="button" class="btn btn-danger">Delete audio</button>
                 </div>
         </div>
@@ -99,6 +99,7 @@ const audioForm = ref({});
 const audioFileTmpUrl = ref(undefined);
 const downloadFilePaths = reactive({ wav: '', mp3: '', ogg: '' })
 const downloadFileName = ref('');
+const audioUpdated = ref(false);
 
 // Load data
 const route = useRoute();
@@ -165,6 +166,22 @@ async function deleteAudio() {
     const response = await fetch(`/api/delete/${audioId}`, { method: 'DELETE' });
     if (response.ok) {
         router.push({ name: 'AudioList', query: { deletedAudioId: audioId } })
+    }
+    else {
+        console.error(await response.text());
+    }
+}
+
+async function updateAudio() {
+    const body = { title: audioForm.value.title }
+    const response = await fetch(`/api/audios/${audioId}`, {
+        method: 'PATCH',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' }
+    })
+    if (response.ok) {
+        audioUpdated.value = true;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     else {
         console.error(await response.text());
