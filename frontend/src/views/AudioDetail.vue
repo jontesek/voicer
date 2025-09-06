@@ -6,6 +6,9 @@
 
         <div v-else>
 
+            <p>Created at: {{ formatDatetime(audioForm.createdAt) }} | Updated at: {{ formatDatetime(audioForm.createdAt)
+                }}</p>
+
             <div v-if="audioUpdated" class="alert alert-success" role="alert">Audio updated in database.</div>
 
             <form @submit.prevent="generateAudio">
