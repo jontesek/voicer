@@ -88,6 +88,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { createFilename } from '@/utils/createFilename';
 import { formatDatetime } from '@/utils/formatDatetime';
 import { formatDuration } from '@/utils/formatDuration';
+import { revokeAfterDelay } from '@/utils/revokeAfterDelay';
 
 import voiceList from '@/data/voices.json';
 
@@ -152,10 +153,7 @@ async function downloadSound(fileFormat) {
     tempLink.download = downloadFileName.value;
     tempLink.click();   // trigger download
     // Cleanup
-    setTimeout(() => {
-        URL.revokeObjectURL(url);
-        console.log('Object URL revoked after delay.');
-    }, 500);
+    revokeAfterDelay(url);
 }
 
 async function deleteAudio() {

@@ -67,6 +67,7 @@ import { useRoute } from 'vue-router'
 
 import { createFilename } from '@/utils/createFilename';
 import { formatDuration } from '@/utils/formatDuration';
+import { revokeAfterDelay } from '@/utils/revokeAfterDelay';
 
 // Constants
 const MAX_TITLE_LENGTH = 20;
@@ -198,7 +199,7 @@ async function downloadAudio(audioFilePath, audio) {
   anchor.href = blobUrl;
   anchor.download = createFilename(audio.title, audio.text, audio.id, audio.createdAt);
   anchor.click();
-  setTimeout(() => { URL.revokeObjectURL(blobUrl); }, 500);
+  revokeAfterDelay(blobUrl);
 }
 
 function showDownloadFormatMenu(audioId, event) {

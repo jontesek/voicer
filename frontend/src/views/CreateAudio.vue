@@ -98,6 +98,7 @@ import Choices from 'choices.js'
 
 import { createFilename } from '@/utils/createFilename';
 import { formatDuration } from '@/utils/formatDuration';
+import { revokeAfterDelay } from '@/utils/revokeAfterDelay';
 
 import voiceData from '@/data/voices.json';
 
@@ -281,10 +282,7 @@ async function downloadLossy(format) {
     anchor.click()
 
     // Cleanup
-    setTimeout(() => {
-        URL.revokeObjectURL(blobUrl);
-        console.log('Object URL revoked after delay.');
-    }, 500);
+    revokeAfterDelay(blobUrl);
 }
 
 async function downloadWav() {
@@ -302,10 +300,7 @@ async function downloadWav() {
     anchor.click()
 
     // Cleanup
-    setTimeout(() => {
-        URL.revokeObjectURL(blobUrl);
-        console.log('Object URL revoked after delay.');
-    }, 500);
+    revokeAfterDelay(blobUrl);
 }
 
 // Token count
