@@ -6,7 +6,7 @@
 
         <div v-else>
 
-            <p>Created at: {{ formatDatetime(audioForm.createdAt) }} | Updated at: {{ formatDatetime(audioForm.createdAt)
+            <p>Created at: {{ formatDatetime(audioForm.createdAt) }} | Updated at: {{ formatDatetime(audioForm.updatedAt)
                 }}</p>
 
             <div v-if="audioUpdated" class="alert alert-success" role="alert">Audio updated in database.</div>
@@ -115,7 +115,7 @@ onMounted(async () => {
 
 const fetchAudio = async (id) => {
     // Get data
-    const response = await fetch(`/api/get/${id}`);
+    const response = await fetch(`/api/audios/${id}`);
     const response_json = await response.json();
     if (!response.ok) {
         console.error(response_json.error);
@@ -138,7 +138,7 @@ const fetchAudio = async (id) => {
 const fetchSound = async (soundFilePath) => {
     // Get file from API
     const encodedPath = encodeURIComponent(soundFilePath);
-    const response = await fetch(`/api/getSound?filePath=${encodedPath}`);
+    const response = await fetch(`/api/audio-file?filePath=${encodedPath}`);
     if (!response.ok) {
         console.error(await response.text());
         return;
@@ -166,7 +166,7 @@ async function deleteAudio() {
     if (!confirmed) {
         return;
     }
-    const response = await fetch(`/api/delete/${audioId}`, { method: 'DELETE' });
+    const response = await fetch(`/api/audios/${audioId}`, { method: 'DELETE' });
     if (response.ok) {
         router.push({ name: 'AudioList', query: { deletedAudioId: audioId } })
     }

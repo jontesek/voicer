@@ -62,7 +62,7 @@ onMounted(async () => {
 async function fetchRequestCount(lastResetDt) {
     const sinceDt = lastResetDt.toISOString();
     const params = new URLSearchParams({ sinceDt: sinceDt });
-    const response = await fetch(`/api/request-count?${params}`);
+    const response = await fetch(`/api/metrics/request-count?${params}`);
     const result = await response.json();
     requestCountSinceReset.value = result;
 }

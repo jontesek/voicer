@@ -169,7 +169,7 @@ const generateAudio = async () => {
     showGenInfo.value = true;
     genInfoType.value = GEN_INFO_PROCESSING;
     // Contact API
-    const response = await fetch('/api/generate', {
+    const response = await fetch('/api/tts', {
         method: 'POST',
         body: JSON.stringify(audioForm),
         headers: { 'Content-Type': 'application/json' }
@@ -226,7 +226,7 @@ const saveToStorage = async () => {
     }
     console.log(reqData);
     // Send request
-    const response = await fetch('/api/save', {
+    const response = await fetch('/api/audios', {
         method: 'POST',
         body: JSON.stringify(reqData),
         headers: { 'Content-Type': 'application/json' }

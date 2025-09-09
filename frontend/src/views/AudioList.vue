@@ -102,7 +102,7 @@ onMounted(() => {
 // API
 const fetchAudios = async () => {
   try {
-    const response = await fetch('/api/getAll');
+    const response = await fetch('/api/audios');
     const data = await response.json();
     audios.value = data;
     if (data.length === 0) {
@@ -120,7 +120,7 @@ const deleteAudio = async (id) => {
     return;
   }
   try {
-    const response = await fetch(`/api/delete/${id}`, {
+    const response = await fetch(`/api/audios/${id}`, {
       method: 'DELETE'
     });
     if (response.ok) {
@@ -145,7 +145,7 @@ const fetchSound = async (soundFilePath, audioId, updateCache) => {
   }
   // If not, get it from API
   const encodedPath = encodeURIComponent(soundFilePath);
-  const response = await fetch(`/api/getSound?filePath=${encodedPath}`);
+  const response = await fetch(`/api/audio-file?filePath=${encodedPath}`);
   if (!response.ok) {
     console.error(await response.text());
     return;

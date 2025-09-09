@@ -41,11 +41,11 @@ const usageTracker = new UsageTracker(ttsRequestDbModel);
 const AUDIO_CONTENT_TYPES = { wav: 'audio/wav', mp3: 'audio/mpeg', ogg: 'audio/ogg' };
 
 // Endpoints
-app.get('/api/ping', (req, res) => {
-  res.send('pong');
+app.get('/api/health', (req, res) => {
+  res.send('ok');
 });
 
-app.post('/api/generate', async (req, res) => {
+app.post('/api/tts', async (req, res) => {
   const reqData = req.body;
   let _args = { model: reqData.model, voiceName: reqData.voiceName, temperature: reqData.temperature, style: reqData.style, text: reqData.text };
   const result = await ttsApi.getSpeech(_args);
@@ -68,19 +68,19 @@ app.post('/api/generate', async (req, res) => {
   res.json(result);
 });
 
-app.post('/api/save', async (req, res) => {
+app.post('/api/audios', async (req, res) => {
   const reqData = req.body;
   const result = await audioSaver.saveNew(reqData.generationInputs, reqData.generatedMetadata, reqData.generatedWav);
   //const result = {audioId: 13};
   res.json(result);
 });
 
-app.get('/api/getAll', async (req, res) => {
+app.get('/api/audios', async (req, res) => {
   const result = await audioSaver.getAll();
   res.json(result);
 });
 
-app.delete('/api/delete/:id', async (req, res) => {
+app.delete('/api/audios/:id', async (req, res) => {
   const id = req.params.id;
   const result = await audioSaver.delete(id);
   // Handle problem
@@ -93,7 +93,7 @@ app.delete('/api/delete/:id', async (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.get('/api/getSound', async (req, res) => {
+app.get('/api/audio-file', async (req, res) => {
   const filePath = req.query.filePath;
   const result = await audioSaver.getSound(filePath);
   // Handle problem
@@ -118,7 +118,7 @@ app.get('/api/getSound', async (req, res) => {
   res.send(soundBuffer);
 });
 
-app.get('/api/get/:id', async (req, res) => {
+app.get('/api/audios/:id', async (req, res) => {
   const id = req.params.id;
   const result = await audioSaver.get(id);
   // Handle problem
@@ -138,7 +138,7 @@ app.post('/api/convert/:format', async (req, res) => {
   res.send(lossyBuffer);
 });
 
-app.get('/api/request-count', async (req, res) => {
+app.get('/api/metrics/request-count', async (req, res) => {
   // Get date param
   const sinceDtParam = req.query.sinceDt;
   const sinceDtObj = new Date(sinceDtParam);

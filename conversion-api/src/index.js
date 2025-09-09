@@ -19,8 +19,8 @@ app.use((req, res, next) => {
 const SUPPORTED_FORMATS = { 'mp3': 'audio/mpeg', 'ogg': 'audio/ogg' }
 
 // Endpoints
-app.get('/ping', (req, res) => {
-  res.send('pong');
+app.get('/health', (req, res) => {
+  res.send('ok');
 });
 
 app.post('/convert/:format', async (req, res) => {
