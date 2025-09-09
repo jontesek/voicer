@@ -148,7 +148,7 @@ const fetchSound = async (soundFilePath) => {
     return URL.createObjectURL(soundData);
 }
 
-async function downloadSound(fileFormat) {
+const downloadSound = async (fileFormat) => {
     // Get file from storage
     const url = await fetchSound(downloadFilePaths[fileFormat]);
     // Make another link for download
@@ -160,7 +160,7 @@ async function downloadSound(fileFormat) {
     revokeAfterDelay(url);
 }
 
-async function deleteAudio() {
+const deleteAudio = async () => {
     const confirmMsg = `Do you really want to delete audio with ID ${audioId}?`;
     const confirmed = window.confirm(confirmMsg);
     if (!confirmed) {
@@ -175,7 +175,7 @@ async function deleteAudio() {
     }
 }
 
-async function updateAudio() {
+const updateAudio = async () => {
     const body = { title: audioForm.value.title }
     const response = await fetch(`/api/audios/${audioId}`, {
         method: 'PATCH',

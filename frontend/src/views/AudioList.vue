@@ -193,7 +193,7 @@ const handlePlayClick = async (audioId, event) => {
 }
 
 // Downloading
-async function downloadAudio(audioFilePath, audio) {
+const downloadAudio = async (audioFilePath, audio) => {
   const blobUrl = await fetchSound(audioFilePath, audio.id, false);
   const anchor = document.createElement('a');
   anchor.href = blobUrl;
@@ -202,19 +202,19 @@ async function downloadAudio(audioFilePath, audio) {
   revokeAfterDelay(blobUrl);
 }
 
-function showDownloadFormatMenu(audioId, event) {
+const showDownloadFormatMenu = (audioId, event) => {
   activeDownloadMenuId.value = audioId;
   document.addEventListener('click', closeDownloadFormatMenu);
   event.stopPropagation();
 }
 
-function closeDownloadFormatMenu() {
+const closeDownloadFormatMenu = () => {
   activeDownloadMenuId.value = null;
   document.removeEventListener('click', closeDownloadFormatMenu);
 }
 
 // Helpers
-function trimText(text, maxLength) {
+const trimText = (text, maxLength) => {
   return text.length > maxLength
     ? text.substring(0, maxLength - 3) + '...'
     : text;

@@ -207,7 +207,7 @@ const generateAudio = async () => {
     });
 };
 
-function handleCancel() {
+const handleCancel = () => {
     showGenInfo.value = false;
     genBtnDisabled.value = false;
     cancelGenerate.value = true;
@@ -243,7 +243,7 @@ const saveToStorage = async () => {
 }
 
 // Downloading
-function base64ToArrayBuffer(base64String) {
+const base64ToArrayBuffer = (base64String) => {
     // Remove the data URI prefix if present
     const base64 = base64String.split(',')[1] || base64String;
 
@@ -260,7 +260,7 @@ function base64ToArrayBuffer(base64String) {
     return bytes.buffer;
 }
 
-async function downloadLossy(format) {
+const downloadLossy = async (format) => {
     console.log(`Downloading ${format} - converting from WAV`);
 
     // From base64 to binary
@@ -285,7 +285,7 @@ async function downloadLossy(format) {
     revokeAfterDelay(blobUrl);
 }
 
-async function downloadWav() {
+const downloadWav = async () => {
     console.log('Downloading WAV - converting from base64');
 
     // From base64 to binary
@@ -304,24 +304,24 @@ async function downloadWav() {
 }
 
 // Token count
-function getInputTokenCount() {
+const getInputTokenCount = () => {
     const prompt = audioForm.style + "\n\n" + audioForm.text;
     return countTokens(prompt);
 }
 
-function countTokens(str) {
+const countTokens = (str) => {
     if (!tiktokenEncoder) return 0;
     return tiktokenEncoder.encode(str).length;
 }
 
-function isTokenCountOverLimit() {
+const isTokenCountOverLimit = () => {
     // Add some slack to allow for mismatch with Gemini parser
     const margin = Math.ceil(MAX_TOKEN_COUNT * 0.01);
     const count = getInputTokenCount() + margin;
     return count > MAX_TOKEN_COUNT;
 }
 
-function getOutputTokenCount(inputCount) {
+const getOutputTokenCount = (inputCount) => {
     return inputCount * 5;
 }
 
