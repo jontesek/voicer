@@ -4,7 +4,7 @@ const Minio = await import('minio'); // minio has no default export
 import { AudioSaver } from './saver.js';
 import { UsageTracker } from './tracker.js';
 import { TtsApi } from './tts_api.js';
-import { GEMINI_API_KEY, DB_FILE_PATH, MINIO_HOST, CONVERTER_API_URL } from './settings.js';
+import { GEMINI_API_KEY, DB_FILE_PATH, MINIO_HOST, CONVERTER_API_URL, VOICER_BUCKET } from './settings.js';
 import { readJsonFile, sleep } from './helpers.js';
 import { getDbConnection, defineAudioModel, defineTtsRequestModel } from './database.js';
 import { convertToLossy } from './convert.js';
@@ -21,19 +21,27 @@ app.use(express.raw({ type: 'audio/wav', limit: '50mb' }));
 const dbConn = getDbConnection(DB_FILE_PATH);
 const audioDbModel = defineAudioModel(dbConn);
 const ttsRequestDbModel = defineTtsRequestModel(dbConn);
-// Update DB
-// await dbConn.sync();
-// process.exit();
+// Create tables if needed
+await dbConn.sync();
 
-// Working objects
-const ttsApi = new TtsApi(GEMINI_API_KEY);
+// Object storage
 const s3Client = new Minio.Client({
   endPoint: MINIO_HOST,
   port: 9000,
   useSSL: false,
   accessKey: 'minioadmin',
-  secretKey: 'minioadmin'
+  secretKey: 'eh746KwpNPs'
 });
+
+// Create bucket if needed
+const bucketExists = await s3Client.bucketExists(VOICER_BUCKET);
+if (!bucketExists) {
+  await s3Client.makeBucket(VOICER_BUCKET);
+  console.log(`Bucket ${VOICER_BUCKET} created.`);
+}
+
+// Working objects
+const ttsApi = new TtsApi(GEMINI_API_KEY);
 const audioSaver = new AudioSaver(audioDbModel, s3Client);
 const usageTracker = new UsageTracker(ttsRequestDbModel);
 
