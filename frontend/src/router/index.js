@@ -3,6 +3,7 @@ import CreateAudio from '../views/CreateAudio.vue';
 import AudioList from '../views/AudioList.vue';
 import AudioDetail from '../views/AudioDetail.vue';
 import AccountStats from '../views/AccountStats.vue';
+import HomePage from '../views/HomePage.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/account-stats',
       name: 'AccountStats',
       component: AccountStats
+    },
+    {
+      path: '/',
+      name: 'HomePage',
+      component: HomePage
     }
   ],
 })
