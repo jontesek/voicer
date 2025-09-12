@@ -1,0 +1,47 @@
+services:
+  frontend:
+    build: frontend/
+    ports:
+      - "5000:5000"
+    depends_on:
+      - backend
+
+  backend:
+    build: backend/
+    working_dir: /usr/src/app
+    volumes:
+      - ./local_data/db:/db
+    ports:
+      - "3000:3000"
+    command: ["node", "src/index.js"]
+    environment:
+      - NODE_ENV=production
+      - DB_FILE_PATH=/db/voicer.db
+      - GEMINI_API_KEY=${GEMINI_API_KEY}  # from .env file
+      - CONVERSION_HOST=conversion
+      - MINIO_HOST=minio
+    depends_on:
+      - minio
+      - conversion
+
+  conversion:
+    build: conversion-api/
+    working_dir: /usr/src/app
+    ports:
+      - "3001:3001"
+    command: ["node", "src/index.js"]
+    environment:
+      - NODE_ENV=production
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"   # S3-compatible API
+      - "9090:9090"   # Web console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: eh746KwpNPs
+    volumes:
+      - ./local_data/minio:/data
+    command: server /data --console-address ":9090"
