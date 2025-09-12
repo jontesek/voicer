@@ -1,9 +1,15 @@
+# MacOS
 .DS_Store
+# NodeJS
 node_modules/
+# Secrets
 .env
+gcloud-key.json
+# Educational
+default-vue-project
+# Local data
+conversion-api/test_data/
 secret.txt
 files/
+local_data/
 archive.txt
-default-vue-project
-conversion-api/test_data/
-gcloud-key.json
