@@ -7,27 +7,31 @@ services:
       - "9090:9090"   # Web console
     environment:
       MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_PASSWORD: eh746KwpNPs
     volumes:
-      - ./../files/minio:/data
+      - ./../local_data/minio:/data
     command: server /data --console-address ":9090"
 
-  # api:
-  #   build: .      
-  #   working_dir: /usr/src/app
-  #   volumes:
-  #     - .:/usr/src/app
-  #     - node_modules:/usr/src/app/node_modules
-  #     - ./../files/db:/db
-  #   ports:
-  #     - "3000:3000"
-  #   command: ["node", "src/index.js"]
-  #   # command: ["sleep", "infinity"]
-  #   environment:
-  #     - NODE_ENV=development
-  #     - DB_FILE_PATH=/db/voicer.db
-  #   env_file:
-  #     - ../.env
+  backend:
+    build: .
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+      - node_modules:/usr/src/app/node_modules
+      - ./../local_data/db:/db
+    ports:
+      - "3000:3000"
+    command: ["node", "src/index.js"]
+    # command: ["sleep", "infinity"]
+    environment:
+      - NODE_ENV=development
+      - DB_FILE_PATH=/db/voicer.db
+      - MINIO_HOST=minio
+      - CONVERSION_HOST=host.docker.internal  # try 172.17.0.1 for linux
+    depends_on:
+      - minio
+    env_file:
+      - ../.env
 
 volumes:
   node_modules:
