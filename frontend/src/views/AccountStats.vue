@@ -19,7 +19,7 @@
         <p>The app tracks each time you hit the Generate button. It should be the same as the number of requests to
             Gemini API.</p>
         <p>Request count since last reset ({{ localResetDtString }}): {{ requestCountSinceReset }}</p>
-        <p>Remaining requests: {{ freeTierRequestPerDay - requestCountSinceReset }}</p>
+        <p><strong>Remaining requests: {{ freeTierRequestPerDay - requestCountSinceReset }}</strong></p>
         <p>Next reset at: {{ nextLocalResetDtString }}</p>
 
     </div>
