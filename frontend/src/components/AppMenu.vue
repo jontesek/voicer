@@ -27,4 +27,9 @@
   font-weight: bold;
   color: #fff !important; /* Important to override Bootstrap's default link color */
 }
+
+.nav-link {
+  /* color: rgb(155, 164, 197); */
+  font-size: 1.1em;
+}
 </style>
