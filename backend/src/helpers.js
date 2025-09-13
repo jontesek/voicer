@@ -5,8 +5,8 @@ export function sleep(ms) {
 }
 
 export function readJsonFile(path) {
-    const raw = readFileSync(path, 'utf8');
-    return JSON.parse(raw);
+  const raw = readFileSync(path, 'utf8');
+  return JSON.parse(raw);
 }
 
 export async function binaryStreamToBuffer(stream) {

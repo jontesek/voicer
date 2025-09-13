@@ -5,7 +5,7 @@ import { AudioSaver } from './saver.js';
 import { UsageTracker } from './tracker.js';
 import { TtsApi } from './tts_api.js';
 import { GEMINI_API_KEY, DB_FILE_PATH, MINIO_HOST, CONVERTER_API_URL, VOICER_BUCKET } from './settings.js';
-import { readJsonFile, sleep } from './helpers.js';
+// import { readJsonFile, sleep } from './helpers.js';
 import { getDbConnection, defineAudioModel, defineTtsRequestModel } from './database.js';
 import { convertToLossy } from './convert.js';
 
