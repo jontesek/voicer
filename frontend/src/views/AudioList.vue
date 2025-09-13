@@ -2,10 +2,13 @@
   <div class="audio-list-page">
     <h2 class="mb-4">Your Audio List</h2>
 
-    <div v-if="deletedAudioId" class="alert alert-info"> Audio with id {{deletedAudioId}} was deleted.</div>
+    <div v-if="deletedAudioId" class="alert alert-info">
+      Audio with id {{ deletedAudioId }} was deleted.
+    </div>
 
     <div v-if="showNoAudioMsg" class="alert alert-info" role="alert">
-      No audio files found. Go to <router-link to="/create-audio">Create Audio</router-link> to add some!
+      No audio files found. Go to <router-link to="/create-audio">Create Audio</router-link> to add
+      some!
     </div>
 
     <div v-if="audios.length > 0" class="table-responsive mb-5" style="overflow: visible">
@@ -23,23 +26,41 @@
         <tbody>
           <tr v-for="audio in audios" :key="audio.id">
             <th scope="row">{{ audio.id }}</th>
-            <td><span :title="audio.title.length > MAX_TITLE_LENGTH ? audio.title : ''">{{ trimText(audio.title || '',
-              MAX_TITLE_LENGTH) }}</span>
+            <td>
+              <span :title="audio.title.length > MAX_TITLE_LENGTH ? audio.title : ''">{{
+                trimText(audio.title || '', MAX_TITLE_LENGTH)
+              }}</span>
             </td>
-            <td><span :title="audio.style.length > MAX_STYLE_LENGTH ? audio.style : ''">{{ trimText(audio.style || '',
-              MAX_STYLE_LENGTH) }}</span>
+            <td>
+              <span :title="audio.style.length > MAX_STYLE_LENGTH ? audio.style : ''">{{
+                trimText(audio.style || '', MAX_STYLE_LENGTH)
+              }}</span>
             </td>
-            <td><span :title="audio.text.length > MAX_TEXT_LENGTH ? audio.text : ''">{{ trimText(audio.text,
-              MAX_TEXT_LENGTH) }}</span></td>
+            <td>
+              <span :title="audio.text.length > MAX_TEXT_LENGTH ? audio.text : ''">{{
+                trimText(audio.text, MAX_TEXT_LENGTH)
+              }}</span>
+            </td>
             <td>{{ formatDuration(audio.audioDuration) }}</td>
             <td class="actions-column">
-
-              <button class="play-btn" aria-label="Play" @mouseover="fetchSound(audio.oggFilePath, audio.id, true)"
-                @click="handlePlayClick(audio.id, $event)"><i class="bi bi-play-fill play-icon"></i></button>
+              <button
+                class="play-btn"
+                aria-label="Play"
+                @mouseover="fetchSound(audio.oggFilePath, audio.id, true)"
+                @click="handlePlayClick(audio.id, $event)"
+              >
+                <i class="bi bi-play-fill play-icon"></i>
+              </button>
 
               <div class="download-container">
-                <button class="play-btn" aria-label="Download" @click="showDownloadFormatMenu(audio.id, $event)"
-                  aria-expanded="false"><i class="bi bi-download"></i></button>
+                <button
+                  class="play-btn"
+                  aria-label="Download"
+                  @click="showDownloadFormatMenu(audio.id, $event)"
+                  aria-expanded="false"
+                >
+                  <i class="bi bi-download"></i>
+                </button>
                 <div v-if="activeDownloadMenuId === audio.id" class="download-format-menu">
                   <button @click="downloadAudio(audio.wavFilePath, audio)">WAV</button>
                   <button @click="downloadAudio(audio.mp3FilePath, audio)">MP3</button>
@@ -47,12 +68,20 @@
                 </div>
               </div>
 
-              <router-link :to="{ name: 'AudioDetail', params: { id: audio.id } }" class="btn btn-info btn-sm">
+              <router-link
+                :to="{ name: 'AudioDetail', params: { id: audio.id } }"
+                class="btn btn-info btn-sm"
+              >
                 Detail
               </router-link>
 
-              <button class="btn btn-danger btn-sm" @click="deleteAudio(audio.id)" aria-label="Delete"><i
-                  class="bi bi-trash"></i></button>
+              <button
+                class="btn btn-danger btn-sm"
+                @click="deleteAudio(audio.id)"
+                aria-label="Delete"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
             </td>
           </tr>
         </tbody>
@@ -63,7 +92,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router'
+import { useRoute } from 'vue-router';
 
 import { createFilename } from '@/utils/createFilename';
 import { formatDuration } from '@/utils/formatDuration';
@@ -97,7 +126,7 @@ if (redirectDeletedAudioId) {
 // Lifecycle
 onMounted(() => {
   fetchAudios();
-})
+});
 
 // API
 const fetchAudios = async () => {
@@ -109,9 +138,9 @@ const fetchAudios = async () => {
       showNoAudioMsg.value = true;
     }
   } catch (error) {
-    console.error(`Fetch error: ${error}`)
+    console.error(`Fetch error: ${error}`);
   }
-}
+};
 
 const deleteAudio = async (id) => {
   const confirmMsg = `Do you really want to delete audio with ID ${id}?`;
@@ -121,27 +150,25 @@ const deleteAudio = async (id) => {
   }
   try {
     const response = await fetch(`/api/audios/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
     });
     if (response.ok) {
       deletedAudioId.value = id;
-      audios.value = audios.value.filter(audio => audio.id !== id)
-    }
-    else {
+      audios.value = audios.value.filter((audio) => audio.id !== id);
+    } else {
       console.error(await response.text());
     }
-
   } catch (error) {
-    console.error(`Fetch error: ${error}`)
+    console.error(`Fetch error: ${error}`);
   }
-}
+};
 
 const fetchSound = async (soundFilePath, audioId, updateCache) => {
   // Check if audio already cached
   const _player = audioPlayers.get(audioId);
   if (_player && soundFilePath.endsWith(DEFAULT_FETCH_FORMAT)) {
     console.log(`Sound for audio ${audioId} already in cache.`);
-    return _player.src; // for download 
+    return _player.src; // for download
   }
   // If not, get it from API
   const encodedPath = encodeURIComponent(soundFilePath);
@@ -159,7 +186,7 @@ const fetchSound = async (soundFilePath, audioId, updateCache) => {
     audioPlayers.set(audioId, player);
   }
   return url;
-}
+};
 
 // Interaction
 const handlePlayClick = async (audioId, event) => {
@@ -176,7 +203,7 @@ const handlePlayClick = async (audioId, event) => {
   // Handle play
   if (!audioPlayer) {
     console.log('Sound not yet loaded');
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     console.log('Sound loaded after sleep');
   }
   // Set back to play icon when finished
@@ -190,7 +217,7 @@ const handlePlayClick = async (audioId, event) => {
   soundPlaying.value = true;
   playBtn.setAttribute('aria-label', 'Pause');
   playBtn.querySelector('i').className = pauseIconClass;
-}
+};
 
 // Downloading
 const downloadAudio = async (audioFilePath, audio) => {
@@ -200,26 +227,23 @@ const downloadAudio = async (audioFilePath, audio) => {
   anchor.download = createFilename(audio.title, audio.text, audio.id, audio.createdAt);
   anchor.click();
   revokeAfterDelay(blobUrl);
-}
+};
 
 const showDownloadFormatMenu = (audioId, event) => {
   activeDownloadMenuId.value = audioId;
   document.addEventListener('click', closeDownloadFormatMenu);
   event.stopPropagation();
-}
+};
 
 const closeDownloadFormatMenu = () => {
   activeDownloadMenuId.value = null;
   document.removeEventListener('click', closeDownloadFormatMenu);
-}
+};
 
 // Helpers
 const trimText = (text, maxLength) => {
-  return text.length > maxLength
-    ? text.substring(0, maxLength - 3) + '...'
-    : text;
-}
-
+  return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+};
 </script>
 
 <style scoped>

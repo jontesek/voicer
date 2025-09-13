@@ -1,38 +1,38 @@
 [
-    {
-        "name": "Zephyr",
-        "mood": "bright",
-        "pitch": "higher",
-        "gender": "female"
-    },
-    {
-        "name": "Puck",
-        "mood": "upbeat",
-        "pitch": "middle",
-        "gender": "male"
-    },
-    {
-        "name": "Charon",
-        "mood": "informative",
-        "pitch": "lower",
-        "gender": "male"
-    },
-    {
-        "name": "Kore",
-        "mood": "firm",
-        "pitch": "middle",
-        "gender": "female"
-    },
-    {
-        "name": "Fenrir",
-        "mood": "excitable",
-        "pitch": "lower",
-        "gender": "male"
-    },
-    {
-        "name": "Leda",
-        "mood": "youthful",
-        "pitch": "higher",
-        "gender": "female"
-    }
+  {
+    "name": "Zephyr",
+    "mood": "bright",
+    "pitch": "higher",
+    "gender": "female"
+  },
+  {
+    "name": "Puck",
+    "mood": "upbeat",
+    "pitch": "middle",
+    "gender": "male"
+  },
+  {
+    "name": "Charon",
+    "mood": "informative",
+    "pitch": "lower",
+    "gender": "male"
+  },
+  {
+    "name": "Kore",
+    "mood": "firm",
+    "pitch": "middle",
+    "gender": "female"
+  },
+  {
+    "name": "Fenrir",
+    "mood": "excitable",
+    "pitch": "lower",
+    "gender": "male"
+  },
+  {
+    "name": "Leda",
+    "mood": "youthful",
+    "pitch": "higher",
+    "gender": "female"
+  }
 ]

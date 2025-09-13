@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
 import CreateAudio from '../views/CreateAudio.vue';
 import AudioList from '../views/AudioList.vue';
 import AudioDetail from '../views/AudioDetail.vue';
@@ -11,29 +11,29 @@ const router = createRouter({
     {
       path: '/create-audio',
       name: 'CreateAudio',
-      component: CreateAudio
+      component: CreateAudio,
     },
     {
       path: '/audio-list',
       name: 'AudioList',
-      component: AudioList
+      component: AudioList,
     },
     {
       path: '/audio-detail/:id',
       name: 'AudioDetail',
-      component: AudioDetail
+      component: AudioDetail,
     },
     {
       path: '/account-stats',
       name: 'AccountStats',
-      component: AccountStats
+      component: AccountStats,
     },
     {
       path: '/',
       name: 'HomePage',
-      component: HomePage
-    }
+      component: HomePage,
+    },
   ],
-})
+});
 
-export default router
+export default router;

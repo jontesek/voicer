@@ -21,9 +21,9 @@ export default {
   components: {
     AppHeader,
     AppMenu,
-    AppFooter
-  }
-}
+    AppFooter,
+  },
+};
 </script>
 
 <style>
