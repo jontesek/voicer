@@ -23,4 +23,12 @@ export default defineConfig([
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
   skipFormatting,
+
+  {
+    name: 'custom-overrides',
+    files: ['**/*.{js,mjs,jsx,vue}'],
+    rules: {
+      indent: ['error', 2],
+    },
+  },
 ])
