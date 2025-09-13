@@ -9,24 +9,12 @@
       <div class="mb-3">
         <p class="mb-1 fw-bold">Speech model:</p>
         <div class="form-check">
-          <input
-            class="form-check-input"
-            type="radio"
-            v-model="audioForm.model"
-            id="speechBasicOption"
-            value="basic"
-          />
+          <input class="form-check-input" type="radio" v-model="audioForm.model" id="speechBasicOption" value="basic" />
           <label class="form-check-label" for="aqBasicOption" checked>Basic</label>
         </div>
         <div class="form-check">
-          <input
-            class="form-check-input"
-            type="radio"
-            v-model="audioForm.model"
-            id="speechAdvancedOption"
-            value="advanced"
-            disabled
-          />
+          <input class="form-check-input" type="radio" v-model="audioForm.model" id="speechAdvancedOption"
+            value="advanced" disabled />
           <label class="form-check-label" for="aqAdvancedOption">Advanced</label>
         </div>
       </div>
@@ -39,25 +27,13 @@
         </select>
       </div>
       <div class="mb-3">
-        <label for="audioTemp" class="form-label"
-          ><strong>Temperature</strong> (expressivity):</label
-        >
-        <input
-          type="range"
-          class="form-range w-25 ms-2 me-2 pt-3"
-          id="audioTemp"
-          min="0"
-          max="2"
-          step="0.05"
-          value="1"
-          v-model="audioForm.temperature"
-        />
+        <label for="audioTemp" class="form-label"><strong>Temperature</strong> (expressivity):</label>
+        <input type="range" class="form-range w-25 ms-2 me-2 pt-3" id="audioTemp" min="0" max="2" step="0.05" value="1"
+          v-model="audioForm.temperature" />
         <span id="audioTempValue">{{ audioForm.temperature }}</span>
       </div>
       <div class="mb-3">
-        <label for="audioStyle" class="form-label"
-          ><strong>Style instructions</strong> (optional):</label
-        >
+        <label for="audioStyle" class="form-label"><strong>Style instructions</strong> (optional):</label>
         <textarea class="form-control" id="audioStyle" v-model="audioForm.style"></textarea>
       </div>
       <div class="mb-3">
@@ -71,23 +47,14 @@
         <p>Output tokens: {{ getOutputTokenCount(getInputTokenCount()) }} (estimate)</p>
       </div>
       <div class="generate-btn-section">
-        <button
-          type="submit"
-          class="btn btn-primary me-3"
-          :disabled="isTokenCountOverLimit() || genBtnDisabled"
-        >
+        <button type="submit" class="btn btn-primary me-3" :disabled="isTokenCountOverLimit() || genBtnDisabled">
           Generate
         </button>
         <span class="text-danger" v-if="isTokenCountOverLimit()">Too many tokens</span>
         <span v-if="showGenInfo">
           <span v-if="genInfoType === GEN_INFO_PROCESSING">Processing... </span>
-          <button
-            v-if="genInfoType === GEN_INFO_PROCESSING"
-            class="cancel-btn"
-            aria-label="Cancel"
-            title="Cancel"
-            @click="handleCancel()"
-          >
+          <button v-if="genInfoType === GEN_INFO_PROCESSING" class="cancel-btn" aria-label="Cancel" title="Cancel"
+            @click="handleCancel()">
             <i class="bi bi-x-circle cancel-icon align-middle"></i>
           </button>
           <span v-if="genInfoType === GEN_INFO_ERROR" class="text-danger">
@@ -108,26 +75,12 @@
         <ul>
           <li><a href="#" @click.prevent="downloadWav()">Download WAV</a></li>
           <li>
-            <a
-              class="convert-tooltip"
-              @click.prevent="downloadLossy('mp3')"
-              href="#"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              data-bs-title="takes some time"
-              >Download MP3</a
-            >
+            <a class="convert-tooltip" @click.prevent="downloadLossy('mp3')" href="#" data-bs-toggle="tooltip"
+              data-bs-placement="top" data-bs-title="takes some time">Download MP3</a>
           </li>
           <li>
-            <a
-              class="convert-tooltip"
-              @click.prevent="downloadLossy('ogg')"
-              href="#"
-              data-bs-toggle="tooltip"
-              data-bs-placement="top"
-              data-bs-title="takes some time"
-              >Download Ogg</a
-            >
+            <a class="convert-tooltip" @click.prevent="downloadLossy('ogg')" href="#" data-bs-toggle="tooltip"
+              data-bs-placement="top" data-bs-title="takes some time">Download Ogg</a>
           </li>
         </ul>
       </div>
@@ -136,15 +89,11 @@
           Save to storage
         </button>
         <span v-if="saveToStorageInProcess">Saving...</span>
-        <span v-if="saveToStorageSuccessId"
-          >Saved to storage with ID {{ saveToStorageSuccessId }}:
-          <router-link :to="{ name: 'AudioDetail', params: { id: saveToStorageSuccessId } }"
-            >see detail</router-link
-          ></span
-        >
-        <span v-if="saveToStorageError" class="text-danger"
-          >Error while saving to storage: {{ saveToStorageError }}</span
-        >
+        <span v-if="saveToStorageSuccessId">Saved to storage with ID {{ saveToStorageSuccessId }}:
+          <router-link :to="{ name: 'AudioDetail', params: { id: saveToStorageSuccessId } }">see
+            detail</router-link></span>
+        <span v-if="saveToStorageError" class="text-danger">Error while saving to storage: {{ saveToStorageError
+          }}</span>
       </div>
     </div>
   </div>

@@ -29,36 +29,28 @@
             <td>
               <span :title="audio.title.length > MAX_TITLE_LENGTH ? audio.title : ''">{{
                 trimText(audio.title || '', MAX_TITLE_LENGTH)
-              }}</span>
+                }}</span>
             </td>
             <td>
               <span :title="audio.style.length > MAX_STYLE_LENGTH ? audio.style : ''">{{
                 trimText(audio.style || '', MAX_STYLE_LENGTH)
-              }}</span>
+                }}</span>
             </td>
             <td>
               <span :title="audio.text.length > MAX_TEXT_LENGTH ? audio.text : ''">{{
                 trimText(audio.text, MAX_TEXT_LENGTH)
-              }}</span>
+                }}</span>
             </td>
             <td>{{ formatDuration(audio.audioDuration) }}</td>
             <td class="actions-column">
-              <button
-                class="play-btn"
-                aria-label="Play"
-                @mouseover="fetchSound(audio.oggFilePath, audio.id, true)"
-                @click="handlePlayClick(audio.id, $event)"
-              >
+              <button class="play-btn" aria-label="Play" @mouseover="fetchSound(audio.oggFilePath, audio.id, true)"
+                @click="handlePlayClick(audio.id, $event)">
                 <i class="bi bi-play-fill play-icon"></i>
               </button>
 
               <div class="download-container">
-                <button
-                  class="play-btn"
-                  aria-label="Download"
-                  @click="showDownloadFormatMenu(audio.id, $event)"
-                  aria-expanded="false"
-                >
+                <button class="play-btn" aria-label="Download" @click="showDownloadFormatMenu(audio.id, $event)"
+                  aria-expanded="false">
                   <i class="bi bi-download"></i>
                 </button>
                 <div v-if="activeDownloadMenuId === audio.id" class="download-format-menu">
@@ -68,18 +60,11 @@
                 </div>
               </div>
 
-              <router-link
-                :to="{ name: 'AudioDetail', params: { id: audio.id } }"
-                class="btn btn-info btn-sm"
-              >
+              <router-link :to="{ name: 'AudioDetail', params: { id: audio.id } }" class="btn btn-info btn-sm">
                 Detail
               </router-link>
 
-              <button
-                class="btn btn-danger btn-sm"
-                @click="deleteAudio(audio.id)"
-                aria-label="Delete"
-              >
+              <button class="btn btn-danger btn-sm" @click="deleteAudio(audio.id)" aria-label="Delete">
                 <i class="bi bi-trash"></i>
               </button>
             </td>

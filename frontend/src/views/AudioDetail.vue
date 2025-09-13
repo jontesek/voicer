@@ -24,25 +24,13 @@
         <div class="mb-3">
           <p class="mb-1 fw-bold">Speech model:</p>
           <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              v-model="audioForm.model"
-              id="speechBasicOption"
-              value="basic"
-              disabled
-            />
+            <input class="form-check-input" type="radio" v-model="audioForm.model" id="speechBasicOption" value="basic"
+              disabled />
             <label class="form-check-label" for="aqBasicOption" checked>Basic</label>
           </div>
           <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              v-model="audioForm.model"
-              id="speechAdvancedOption"
-              value="advanced"
-              disabled
-            />
+            <input class="form-check-input" type="radio" v-model="audioForm.model" id="speechAdvancedOption"
+              value="advanced" disabled />
             <label class="form-check-label" for="aqAdvancedOption">Advanced</label>
           </div>
         </div>
@@ -55,42 +43,18 @@
           </select>
         </div>
         <div class="mb-3">
-          <label for="audioTemp" class="form-label"
-            ><strong>Temperature</strong> (expresivity):</label
-          >
-          <input
-            type="range"
-            class="form-range w-25 ms-2 me-2 pt-3"
-            id="audioTemp"
-            min="0"
-            max="2"
-            step="0.05"
-            value="1"
-            v-model="audioForm.temperature"
-            disabled
-          />
+          <label for="audioTemp" class="form-label"><strong>Temperature</strong> (expresivity):</label>
+          <input type="range" class="form-range w-25 ms-2 me-2 pt-3" id="audioTemp" min="0" max="2" step="0.05"
+            value="1" v-model="audioForm.temperature" disabled />
           <span id="audioTempValue">{{ audioForm.temperature }}</span>
         </div>
         <div class="mb-3">
-          <label for="audioStyle" class="form-label"
-            ><strong>Style instructions</strong> (optional):</label
-          >
-          <textarea
-            class="form-control"
-            id="audioStyle"
-            v-model="audioForm.style"
-            disabled
-          ></textarea>
+          <label for="audioStyle" class="form-label"><strong>Style instructions</strong> (optional):</label>
+          <textarea class="form-control" id="audioStyle" v-model="audioForm.style" disabled></textarea>
         </div>
         <div class="mb-3">
           <label for="audioText" class="form-label fw-bold">Text:</label>
-          <textarea
-            class="form-control"
-            id="audioText"
-            v-model="audioForm.text"
-            required
-            disabled
-          ></textarea>
+          <textarea class="form-control" id="audioText" v-model="audioForm.text" required disabled></textarea>
         </div>
       </form>
       <div class="mb-3">
@@ -111,14 +75,10 @@
           <ul class="download-links">
             <li><a :href="audioFileTmpUrl" :download="downloadFileName">Download Ogg</a></li>
             <li>
-              <a href="#" :download="downloadFileName" @click.prevent="downloadSound('mp3')"
-                >Download MP3</a
-              >
+              <a href="#" :download="downloadFileName" @click.prevent="downloadSound('mp3')">Download MP3</a>
             </li>
             <li>
-              <a href="#" :download="downloadFileName" @click.prevent="downloadSound('wav')"
-                >Download WAV</a
-              >
+              <a href="#" :download="downloadFileName" @click.prevent="downloadSound('wav')">Download WAV</a>
             </li>
           </ul>
         </div>

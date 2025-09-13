@@ -9,8 +9,7 @@
     </p>
     <p>
       Free tier has strict limits for the number of <strong>requests per day</strong> (RPD) -
-      <strong>{{ freeTierRequestPerDay }}</strong
-      >. The quota resets at midnight Pacific time - that's
+      <strong>{{ freeTierRequestPerDay }}</strong>. The quota resets at midnight Pacific time - that's
       <strong>{{ localResetTimeString }}</strong> in your timezone.
     </p>
     <p>
